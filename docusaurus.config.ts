@@ -118,15 +118,18 @@ projectName: 'my-docs', // nom EXACT du repo
               label: 'Github page docs',
               type: 'doc',
               docId: 'Installation/document',
-            }
+            },
+
+          {
+          label: 'Linux-astuce',
+    
+          type: 'doc',
+          docId: 'Linux-astuce/serveur',
+        },
 
           ]
         },
-        {
-          label: 'Linux-astuce',
-          position: 'right',
-          to: '/docs/Linux-astuce/serveur',
-        },
+
    
       ],
 
