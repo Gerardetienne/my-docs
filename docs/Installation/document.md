@@ -1,0 +1,227 @@
+# Installation docusaurus
+```
+npx create-docusaurus@latest my-website classic --typescript
+```
+````
+    my-docusaurus-site/
+    ├── blog/
+    │   └── 2023-01-01-welcome.md
+    ├── docs/
+    │   └── intro.md
+    ├── src/
+    │   └── pages/
+    │       └── index.js
+    ├── static/
+    │   └── img/
+    │       └── docusaurus.png
+    ├── docusaurus.config.js
+    ├── sidebars.js
+    ├── package.json
+    ├── README.md
+    └── .gitignore
+
+````
+
+* Une configuration de base prête à l'emploi
+* Une structure de projet avec des dossiers pour la documentation, le blog et les pages
+* Un exemple de page d’accueil, de documentation et de blog
+* Un fichier README pour t’expliquer comment lancer le projet
+* Les fichiers essentiels (package.json, docusaurus.config.js, sidebars.js, etc.)
+
+    ## Structure
+
+    - `docs/` : Documentation principale
+    - `blog/` : Articles de blog
+    - `src/pages` : Pages personnalisées (accueil, etc.)
+    - `static/` : Fichiers statiques (images, etc.)
+
+
+## la personnalisation que tu souhaites pour ton starter Docusaurus.
+````
+1. Logo personnalisé (fichier/image à fournir ou lien)
+2. Couleurs de thème (couleurs principales, secondaires, arrière-plan)
+3. Sidebar (structure/navigation spécifique, catégories, multi-niveaux)
+4. Pages supplémentaires (ex : page « À propos », FAQ, équipe, contact…)
+5. Ajout d’un moteur de recherche (Algolia ou autre)
+6. Intégration de Google Analytics ou autre outil d’analyse
+7. Affichage du mode sombre par défaut
+8. Mise en avant d’un projet ou d’une fonctionnalité en page d’accueil
+9. Pied de page personnalisé (liens, mentions légales)
+10. Liens vers tes réseaux sociaux ou outils internes
+11. Langues multiples (i18n)
+12. Autre (dis-moi tes besoins spécifiques)
+````
+
+## 1\. Prépare ton projet Docusaurus avec GitHub page
+
+Assure-toi d’avoir :
+````
+* Un repo GitHub (public ou privé)
+* Ton site Docusaurus prêt (dans un dossier, avec le code de base)
+````
+
+## 2\. Configure Docusaurus pour GitHub Pages
+
+**a. Modifie `docusaurus.config.js`**
+
+Exemple :
+````
+    url: 'https://Gerardetienne.github.io',
+    baseUrl: '/my-docusaurus-site/',
+    organizationName: 'Gerardetienne',
+    projectName: 'my-docusaurus-site',
+````
+
+**b. Ajoute la branche de déploiement**
+Par défaut, Docusaurus déploie dans la branche `gh-pages`.
+
+**en cas d'erreur :**
+````
+[ERROR] Error: Error while executing command `git rm -rf .`
+fatal: pathspec '.' did not match any files
+````
+
+
+**Cause de l'erreur :**
+Cette erreur signifie que Git essaie de supprimer tous les fichiers (git rm -rf .) dans le répertoire temporaire cloné de la branche gh-pages, mais ce dossier est vide : il n’y a aucun fichier suivi par Git à cet endroit.
+
+````
+* La branche gh-pages est vide ou mal initialisée.
+* Aucun commit n’a jamais été fait sur cette branche.
+* Le dépôt distant ne contient rien dans gh-pages.
+````
+
+**Important : T'assurer que la branche gh-pages existe et a au moins un commit**
+````
+il faut le creer manuelement pour eviter l'eventueles erreur ci-dessus :
+
+**etape1**
+en cas d'erreur **[ERROR] Error: Please set the GIT\_USER environment variable, or explicitly specify USE\_SSH instead!**
+````
+Docusaurus ne sait pas comment s’authentifier pour pousser sur la branche `gh-pages`.
+
+donc :
+
+## 1\. **La solution simple (local, via token GitHub)**
+
+### a. Génère un Personal Access Token (PAT)
+````
+1. Va sur <https://github.com/settings/tokens>
+2. Clique sur « Generate new token » (classic)
+3. Donne un nom, choisis une expiration, et coche :
+  * repo (pour un repo privé)
+  * public\_repo (si ton repo est public)
+4. Clique sur « Generate token » et copie le token.
+````
+
+### b. Configure la variable d’environnement GIT\_USER et GITHUB\_TOKEN
+Dans ton terminal, lance :
+
+````
+$env:GIT_USER="Gerardetienne"
+$env:GITHUB_TOKEN="ton_token_github"
+npm run deploy
+````
+
+
+**etape 2**
+````
+git checkout --orphan gh-pages
+git add .
+git commit -m "Initial gh-pages commit"
+git push origin gh-pages
+
+````
+
+Après :
+
+````
+git checkout main
+npm run build
+npm run deploy
+````
+
+
+## 3\. Ajoute le script de déploiement
+
+Dans `package.json`, ajoute (si ce n’est pas déjà fait) :
+````
+    "scripts": {
+      "deploy": "docusaurus deploy"
+    }
+````
+
+## 4\. Configure GitHub Pages depuis l’interface GitHub
+**Va dans **Settings \> Pages** de ton repo GitHub.**
+
+````
+Choisis :
+
+* Source: **Deploy from a branch**
+* Branche: **gh-pages**
+* Dossier: **/** (racine)
+
+*Clique sur "Save"*.
+
+
+Ton site sera disponible à l’adresse :
+`https://ton-utilisateur.github.io/nom-du-repo/`
+````
+
+
+## ## 5\. Automatiser la mise à jour à chaque push (GitHub Actions)
+Docusaurus fournit un workflow GitHub Actions tout prêt !
+
+**a. Crée un fichier de workflow**
+
+Dans `.github/workflows/deploy.yml` 
+
+````
+    name: Deploy Docusaurus to GitHub Pages
+
+    on:
+      push:
+        branches: [main]
+
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - name: Setup Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: '18'
+
+          - name: Install dependencies
+            run: npm ci
+
+          - name: Build website
+            run: npm run build
+
+          - name: Deploy to GitHub Pages
+            env:
+              GIT_USER: ${{ github.actor }}
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            run: |
+              npm run deploy
+
+````
+
+
+## 6\. Teste le déploiement automatique
+
+Fais un commit/push sur `main` et vérifie dans l’onglet "Actions" de GitHub que le workflow se lance et met à jour ton site.
+
+
+
+
+## En résumé
+````
+1. Configure `docusaurus.config.js` et `package.json`
+2. Première publication avec `npm run deploy`
+3. Crée `.github/workflows/deploy.yml` pour l’automatisation
+4. Chaque push sur `main` déploie automatiquement ton site sur GitHub Pages !
+````

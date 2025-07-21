@@ -104,9 +104,9 @@ projectName: 'my-docs', // nom EXACT du repo
 
           items: [ 
             {
-              label: 'Linux',
+              label: 'Github page docs',
               type: 'doc',
-              docId: 'hello/hello',
+              docId: 'Installation/document',
             }
 
           ]
