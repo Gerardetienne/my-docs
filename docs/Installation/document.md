@@ -141,6 +141,13 @@ npm run build
 npm run deploy
 ````
 
+**etape 3 cas obligatoire**
+Pour voir le log de deployement du project vers gitHub page il faut installer l'extension VsCode 
+
+````
+GitHub Actions
+````
+
 
 ## 3\. Ajoute le script de déploiement
 
