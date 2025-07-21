@@ -101,6 +101,7 @@ projectName: 'my-docs', // nom EXACT du repo
            {
           label: 'My document',
           position: 'right',
+          
           items: [ 
             {
               label: 'Linux',
