@@ -42,6 +42,17 @@ projectName: 'my-docs', // nom EXACT du repo
     locales: ['fr'],
   },
 
+    // gerard add noindex, nofollow
+  headTags: [
+  {
+    tagName: 'meta',
+    attributes: {
+      name: 'robots',
+      content: 'noindex, nofollow',
+    },
+  },
+],
+
   presets: [
     [
       'classic',
