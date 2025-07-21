@@ -1,3 +1,11 @@
+---
+title: Installation docusaurus
+---
+
+import SimpleAuth from '@site/src/components/SimpleAuth';
+
+<SimpleAuth>
+
 # Installation docusaurus
 ```
 npx create-docusaurus@latest my-website classic --typescript
@@ -176,7 +184,7 @@ Ton site sera disponible à l’adresse :
 ````
 
 
-## ## 5\. Automatiser la mise à jour à chaque push (GitHub Actions)
+## 5\. Automatiser la mise à jour à chaque push (GitHub Actions)
 Docusaurus fournit un workflow GitHub Actions tout prêt !
 
 **a. Crée un fichier de workflow**
@@ -232,3 +240,4 @@ Fais un commit/push sur `main` et vérifie dans l’onglet "Actions" de GitHub q
 3. Crée `.github/workflows/deploy.yml` pour l’automatisation
 4. Chaque push sur `main` déploie automatiquement ton site sur GitHub Pages !
 ````
+</SimpleAuth>
