@@ -122,6 +122,12 @@ projectName: 'my-docs', // nom EXACT du repo
 
           ]
         },
+        {
+          label: 'Linux-astuce',
+          position: 'right',
+          to: '/docs/Linux-astuce/serveur',
+        },
+   
       ],
 
       
