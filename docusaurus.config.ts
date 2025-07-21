@@ -16,7 +16,7 @@ const config: Config = {
 
 
 url: 'https://Gerardetienne.github.io', // Remplace par ton username GitHub
-baseUrl: '//my-docs/', // Le nom EXACT de ton repo GitHub, avec des / avant et après si ce n'est pas à la racine
+baseUrl: '/my-docs/', // Le nom EXACT de ton repo GitHub, avec des / avant et après si ce n'est pas à la racine
 organizationName: 'Gerardetienne', // ton username GitHub ou organisation
 projectName: 'my-docs', // nom EXACT du repo
 
@@ -101,7 +101,7 @@ projectName: 'my-docs', // nom EXACT du repo
            {
           label: 'My document',
           position: 'right',
-          
+
           items: [ 
             {
               label: 'Linux',
