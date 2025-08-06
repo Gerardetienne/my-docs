@@ -1,0 +1,1760 @@
+---
+title: LINUX SERVEUR
+---
+
+import SimpleAuth from '@site/src/components/SimpleAuth';
+
+<SimpleAuth>
+
+# 🔧 Guide Complet d'Administration Système
+
+> **Auteur :** Gerardetienne  
+> **Date de création :** 2025-08-06  
+> **Dernière mise à jour :** 2025-08-06 08:12:34 UTC  
+> **Version :** 5.0
+
+---
+
+## 📋 Table des Matières
+
+1. [🌐 Diagnostics Réseau](#-diagnostics-réseau)
+2. [🔑 SSH et Authentification](#-ssh-et-authentification)
+3. [📊 Surveillance Système](#-surveillance-système)
+4. [🐳 Docker Administration](#-docker-administration)
+5. [📝 Gestion des Logs](#-gestion-des-logs)
+6. [🎛️ Cron et Tâches Planifiées](#️-cron-et-tâches-planifiées)
+7. [🐘 WordPress et WP-CLI](#-wordpress-et-wp-cli)
+8. [☁️ AWS et Sauvegarde](#️-aws-et-sauvegarde)
+9. [🔐 Sécurité et Permissions](#-sécurité-et-permissions)
+10. [🛠️ Scripts Bash Avancés](#️-scripts-bash-avancés)
+
+---
+
+## 🌐 Diagnostics Réseau
+
+### 🔍 Résolution DNS
+```bash
+# Résolution d'un nom de domaine
+nslookup skiillz.com
+
+# Obtenir l'IP publique du serveur
+curl ifconfig.me
+```
+
+### 🛡️ Analyse de ports avec Nmap
+
+> 📖 **Guide complet :** [Commandes Nmap](https://www.malekal.com/exemples-de-commandes-nmap/)
+
+#### Installation
+```bash
+# Sur Debian/Ubuntu
+sudo apt-get install nmap
+```
+
+#### Utilisation
+```bash
+# Scanner une machine distante
+sudo nmap votre_domaine_ou_ip
+
+# Scanner des ports spécifiques
+nmap -p 80,443 example.com
+```
+
+---
+
+## 🔑 SSH et Authentification
+
+### 🚪 Connexion SSH avec clé
+
+#### Avec fichier de clé
+```bash
+# Syntaxe générale
+ssh -i "votre_clé_fichier" nom_user@adresse_ip
+
+# Exemple concret
+ssh -i "skiillz144007102021.pem" ubuntu@13.244.208.23
+```
+
+#### Sans clé (authentification par mot de passe)
+```bash
+ssh nom_user@adresse_ip
+```
+
+### 🔧 Résolution des problèmes SSH
+
+#### En cas de changement de clé d'hôte
+```bash
+ssh-keygen -R votre_adresse_ip
+```
+
+#### Correction des permissions de clé privée
+
+**Pour Linux :**
+```bash
+sudo chmod 400 skiillz_captown.pem
+```
+
+**Pour Windows :**
+1. **Clic droit** sur le fichier `.pem`
+2. **Propriétés** → **Sécurité** → **Avancé**
+3. **Désactiver l'héritage** → **Convertir les autorisations héritées**
+4. **Supprimer** tous les utilisateurs sauf votre nom d'utilisateur
+5. **Appliquer** les modifications
+
+---
+
+## 📊 Surveillance Système
+
+### 💾 Surveillance de l'espace disque
+```bash
+# Affichage général de l'espace disque
+sudo df -h /
+
+# Affichage détaillé avec type de système de fichiers
+df -lh
+
+# Affichage des périphériques de stockage
+lsblk
+```
+
+### 🔍 Analyse de la taille des fichiers et dossiers
+
+> 📖 **Guide complet :** [Vérifier l'espace disque sous Linux](https://waytolearnx.com/2019/05/10-commandes-pour-verifier-lespace-disque-sous-linux.html)
+
+#### Top 10 des fichiers/dossiers les plus volumineux
+```bash
+# Dans le répertoire courant
+du -hsx * | sort -rh | head -10
+
+# Recherche récursive avec taille lisible
+sudo du -ah --max-depth=1 / | sort -rh | head -n 10
+
+# Taille d'un dossier spécifique
+du -sh 'nom_dossier'
+```
+
+### 🧠 Surveillance de la mémoire RAM
+```bash
+# Affichage simple de la mémoire
+sudo free -h
+
+# Affichage détaillé
+sudo free -m
+
+# Pourcentage de RAM utilisée
+free -m | awk 'NR==2{printf "%.2f%%\t\t", $3*100/$2 }'
+```
+
+### ⚡ Surveillance CPU et performances
+```bash
+# Pourcentage d'utilisation CPU
+top -bn1 | grep load | awk '{printf "%.2f%%\t\t\n", $(NF-2)}'
+
+# Surveillance interactive
+htop
+```
+
+### 👥 Gestion des utilisateurs et groupes
+```bash
+# Ajouter un utilisateur à un groupe
+sudo usermod -aG www-data your_username
+
+# Voir les groupes d'un utilisateur
+groups ubuntu
+```
+
+---
+
+## 🐳 Docker Administration
+
+### 📋 Gestion des conteneurs
+
+#### Lister et inspecter
+```bash
+# Lister les conteneurs actifs
+docker container list
+docker container ps
+
+# Voir les logs d'un conteneur
+docker container logs id_de_container
+
+# Logs en temps réel
+docker container logs -f nom_container
+```
+
+#### Accès aux conteneurs
+```bash
+# Entrer dans un conteneur
+docker exec -it id_de_container /bin/bash
+
+# Entrer avec un utilisateur spécifique
+docker exec -it -u www-data nom_container /bin/bash
+```
+
+#### Gestion des services
+```bash
+# Démarrer les services (dans le dossier du projet)
+docker-compose up
+
+# Arrêter les services
+docker-compose down
+
+# Démarrer un service spécifique
+docker-compose -f phpadmin.yml start
+```
+
+---
+
+## 📝 Gestion des Logs
+
+### 🔍 Consultation des logs système
+
+#### Logs Apache
+```bash
+# Logs d'erreur en temps réel
+tail -f /var/log/apache2/error.log
+
+# Recherche dans les logs d'erreur
+grep "MaxRequestWorkers" /var/log/apache2/error.log
+```
+
+#### Logs WordPress
+```bash
+# Debug WordPress en temps réel
+tail -f wp-content/debug.log
+
+# Filtrer les erreurs
+cat debug.log | grep error
+```
+
+#### Logs Cron
+```bash
+# Voir les tâches cron exécutées
+grep CRON /var/log/syslog
+
+# Vérifier les processus cron
+ps -aux | grep cron
+```
+
+### 🧹 Nettoyage automatique des logs
+
+> 📖 **Guide complet :** [Script de nettoyage des logs](https://fedingo.com/shell-script-to-clear-delete-log-files/)
+
+#### Script de nettoyage
+```bash name=delete-log.sh
+#!/bin/sh
+
+log_path="/var/log/apache"
+
+# Supprimer les fichiers de plus de 30 jours
+find $log_path* -mtime +30 -exec rm {} \;
+
+echo 'Fichiers journaux de plus de 30 jours supprimés de $log_path'
+```
+
+#### Configuration et exécution
+```bash
+# Rendre le script exécutable
+chmod +x /home/ubuntu/delete-log.sh
+
+# Ajouter à crontab pour exécution quotidienne à 10h
+0 10 * * * /home/ubuntu/delete-log.sh >/dev/null 2>&1
+```
+
+---
+
+## 🎛️ Cron et Tâches Planifiées
+
+> 📖 **Guides de référence :**
+> - [Crontab Linux avec exemples](https://geekflare.com/fr/crontab-linux-with-real-time-examples-and-tools/)
+> - [Automatiser les tâches avec Cron](https://serverspace.io/support/help/automate-tasks-with-cron-ubuntu-20-04/)
+> - [Planifier l'exécution avec Cron](https://www.malekal.com/cron-planifier-execution-programme-script-linux/)
+
+### ⚙️ Gestion de Crontab
+```bash
+# Éditer les tâches cron
+crontab -e
+
+# Lister les tâches cron
+crontab -l
+
+# Vérifier les processus cron
+ps -aux | grep cron
+```
+
+### 📧 Script d'alerte par email
+
+#### Configuration pour surveillance RAM
+```bash name=checkRam.sh
+#!/bin/bash
+
+# Script de surveillance RAM avec seuil à 80%
+ram_usage=$(free | awk '/Mem/ {printf("%.2f"), $3/$2 * 100}')
+
+if (( $(echo "$ram_usage > 80.0" | bc -l) )); then
+    # Envoyer alerte email
+    swaks -t "admin@example.com" \
+          -s smtp.gmail.com:587 -tls \
+          -au "your_email@gmail.com" \
+          -ap "your_app_password" \
+          -f "your_email@gmail.com" \
+          --h-Subject "Alert Mémoire serveur" \
+          --body "Utilisation RAM: $ram_usage%"
+    
+    # Redémarrer Apache si nécessaire
+    sudo service apache2 restart
+fi
+```
+
+---
+
+## 🐘 WordPress et WP-CLI
+
+> 📖 **Documentation officielle :** [WP-CLI Guide Kinsta](https://kinsta.com/fr/blog/wp-cli/)
+
+### 📦 Installation de WP-CLI
+```bash
+# Télécharger WP-CLI
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+# Vérifier l'installation
+php wp-cli.phar --info
+
+# Rendre exécutable et déplacer vers /usr/local/bin
+chmod +x wp-cli.phar
+sudo mv wp-cli.phar /usr/local/bin/wp
+
+# Vérifier la version
+wp --version
+```
+
+### 🔧 Gestion des plugins
+
+#### Lister et gérer
+```bash
+# Lister tous les plugins
+wp plugin list --allow-root
+
+# Activer un plugin
+wp plugin activate wc-product-customer-list --allow-root
+
+# Installer plusieurs plugins
+wp plugin install advanced-custom-fields jetpack ninja-forms --activate
+
+# Installer une version spécifique
+wp plugin update wc-product-customer-list --version=3.1.5 --allow-root
+```
+
+#### Désinstallation
+```bash
+# Désinstaller un plugin
+wp plugin uninstall plugin_name
+
+# Désactiver tous sauf certains
+wp plugin uninstall --all --exclude=hello-dolly,jetpack
+```
+
+### 👥 Gestion des utilisateurs
+
+> 📖 **Documentation :** [WP-CLI User Commands](https://developer.wordpress.org/cli/commands/user/)
+
+```bash
+# Créer un utilisateur administrateur
+wp user create admindev dev_admin@example.com --role=administrator --allow-root
+
+# Mettre à jour un utilisateur
+wp user update admindev --display_name="Admin Dev" --user_pass=newpassword
+
+# Supprimer un utilisateur (réassigner le contenu)
+wp user delete admindev --reassign=gerarddev
+
+# Lister tous les utilisateurs
+wp user list
+
+# Lister seulement les IDs
+wp user list --field=ID
+```
+
+### 🗄️ Gestion de la base de données
+
+#### Import/Export
+```bash
+# Exporter la base de données
+wp db export
+
+# Importer une base de données
+wp db import file.sql
+```
+
+#### Rechercher et remplacer
+
+> 📖 **Guide :** [Search Replace WP-CLI](https://support.cloudways.com/en/articles/5126698-how-to-use-the-search-and-replace-function-of-wp-cli)
+
+```bash
+# Test de remplacement (dry-run)
+wp search-replace "old-domain.com" "new-domain.com" --dry-run --allow-root
+
+# Exécution réelle
+wp search-replace "speed.skiillz.com" "testpreprod.skiillz.com" --allow-root
+
+# Requêtes SQL directes
+wp db query "SELECT * FROM wp_users WHERE user_login = 'admin'"
+```
+
+---
+
+## ☁️ AWS et Sauvegarde
+
+> 📖 **Guide officiel :** [AWS S3 CLI Backup](https://aws.amazon.com/fr/getting-started/hands-on/backup-to-s3-cli/)
+
+### 🛠️ Installation AWS CLI
+```bash
+# Mise à jour du système
+sudo apt-get update
+
+# Installation d'AWS CLI
+sudo apt-get install awscli
+
+# Alternative avec pip3
+sudo apt-get install python3-pip
+pip3 install awscli
+
+# Vérification
+aws --version
+```
+
+### ⚙️ Configuration AWS CLI
+```bash
+# Configuration interactive
+aws configure
+```
+
+**Paramètres requis :**
+- **Access Key ID** : `[****************JNUS]`
+- **Secret Access Key** : `[****************Dgdx]`
+- **Default region** : `ap-southeast-1` (ou votre région)
+- **Default output format** : `json`
+
+### 📁 Gestion des fichiers S3
+
+#### Upload vers S3
+```bash
+# Créer un bucket
+aws s3 mb s3://my-backup-bucket
+
+# Copier un fichier vers S3
+aws s3 cp ./nom_file_à_copier s3://your_bucket/nom_file_destination
+
+# Exemple concret
+aws s3 cp ./romuald-rousseaux.com-backup.wpress s3://romuald-backup/backup.wpress
+```
+
+#### Download depuis S3
+```bash
+# Télécharger un fichier depuis S3
+aws s3 cp s3://your_bucket/nom_file ./
+
+# Exemple
+aws s3 cp s3://www-skiillz-com/catalogue.zip ./
+```
+
+#### Suppression
+```bash
+# Supprimer un fichier S3
+aws s3 rm s3://my-backup-bucket/my-file.bak
+```
+
+---
+
+## 🔐 Sécurité et Permissions
+
+### 📂 Gestion des permissions
+
+#### Permissions globales
+```bash
+# Permissions pour les dossiers (750)
+sudo find /var/www/skiillz/ -type d -exec chmod 750 {} \;
+
+# Permissions pour les fichiers (640)
+sudo find /var/www/skiillz/ -type f -exec chmod 640 {} \;
+
+# Permissions récursives (attention !)
+sudo chmod 777 -R /home/ubuntu/environment/WordPress/skiillz
+```
+
+#### Permissions utilisateur spécifiques
+```bash
+# Ajouter droit lecture/écriture pour le propriétaire
+chmod u+rw texte.txt
+
+# Enlever droit d'écriture pour groupe et autres
+chmod go-w texte.txt
+
+# Correction permissions avec redémarrage Apache
+chmod u+rw config.php
+systemctl restart apache2
+```
+
+### 🔄 Changement d'utilisateur
+```bash
+# Basculer vers www-data
+sudo -su www-data
+
+# Pour Docker avec utilisateur spécifique
+docker exec -it -u www-data container_name /bin/bash
+```
+
+---
+
+## 🛠️ Scripts Bash Avancés
+
+> 📖 **Initiation au scripting Bash :** [Guide NotaMax](https://notamax.be/bash-01-apprendre-a-scripter-sur-gnu-linux/)
+
+### 📧 Configuration Swaks pour emails
+
+> 📖 **Tutorial vidéo :** [Swaks Configuration](https://www.youtube.com/watch?v=zaOhO7Y2tIw)
+
+#### Installation
+```bash
+sudo apt update
+sudo apt -y install swaks
+```
+
+#### Utilisation basique
+```bash
+# Paramètres Swaks
+# -t      -> To (destinataire)
+# -s      -> SMTP server
+# -tls    -> Port 587 avec STARTTLS
+# -au     -> Auth Username
+# -ap     -> Auth Password
+# -f      -> From (expéditeur)
+
+swaks -t "admin@example.com" \
+      -s smtp.gmail.com:587 -tls \
+      -au "sender@gmail.com" \
+      -ap "app_password" \
+      -f "sender@gmail.com" \
+      --h-Subject "Test Alert" \
+      --body "Message de test"
+```
+
+#### Avec pièce jointe
+```bash
+swaks -t "admin@example.com" \
+      -s smtp.gmail.com:587 -tls \
+      -au "sender@gmail.com" \
+      -ap "app_password" \
+      -f "sender@gmail.com" \
+      --h-Subject "Rapport avec PJ" \
+      --body "Voir pièce jointe" \
+      --attach '/home/ubuntu/report.txt'
+```
+
+### 🔍 Conditions et boucles Bash
+
+> 📖 **Guide :** [Bash If-Else Statements](https://linuxize.com/post/bash-if-else-statement/)
+
+#### Script de surveillance d'espace disque
+```bash name=disk-alert.sh
+#!/bin/bash
+
+REALVALUE=$(df / | grep / | awk '{ print $5}' | sed 's/%//g')
+THRESHOLD=80
+
+if [ "$REALVALUE" -gt "$THRESHOLD" ]; then
+    # Envoyer alerte par email
+    swaks -t "admin@example.com" \
+          -s smtp.gmail.com:587 -tls \
+          -au "alert@example.com" \
+          -ap "app_password" \
+          -f "alert@example.com" \
+          --h-Subject "ALERTE: Espace disque critique" \
+          --body "Utilisation actuelle: $REALVALUE% (Seuil: $THRESHOLD%)"
+    
+    echo "Alerte envoyée - Utilisation disque: $REALVALUE%"
+else
+    echo "Utilisation disque normale: $REALVALUE%"
+fi
+```
+
+#### Script de surveillance RAM avancé
+```bash name=ram-monitor.sh
+#!/bin/bash
+
+# Variables de configuration
+THRESHOLD=80
+EMAIL_LIST="admin1@example.com admin2@example.com"
+
+# Récupération des métriques
+RAM_USAGE=$(free -m | awk 'NR==2{printf "%.2f", $3*100/$2 }')
+RAM_FREE=$(awk '/Mem:/ {print $4}' <(free -m))
+RAM_USED=$(awk '/Mem:/ {print $3}' <(free -m))
+
+# Test du seuil
+if (( $(echo "$RAM_USAGE > $THRESHOLD" | bc -l) )); then
+    # Construction du message
+    MESSAGE="ALERTE MEMOIRE SERVEUR
+    
+Utilisation RAM: $RAM_USAGE%
+Mémoire utilisée: ${RAM_USED}MB  
+Mémoire libre: ${RAM_FREE}MB
+Seuil d'alerte: $THRESHOLD%
+
+Action recommandée: Vérifier les processus en cours"
+
+    # Envoi d'email à multiple destinataires
+    for EMAIL in $EMAIL_LIST; do
+        swaks -t "$EMAIL" \
+              -s smtp.gmail.com:587 -tls \
+              -au "monitoring@example.com" \
+              -ap "app_password" \
+              -f "monitoring@example.com" \
+              --h-Subject "🚨 ALERTE RAM - Serveur $HOSTNAME" \
+              --body "$MESSAGE"
+    done
+    
+    # Redémarrage Apache si nécessaire
+    sudo service apache2 restart
+    
+    echo "$(date): Alerte RAM envoyée - Utilisation: $RAM_USAGE%"
+else
+    echo "$(date): RAM normale - Utilisation: $RAM_USAGE%"
+fi
+```
+
+### 🔧 Gestion avancée des scripts
+
+#### Permissions d'exécution
+```bash
+# Rendre un script exécutable
+chmod +x script_name
+
+# Ou pour l'utilisateur uniquement
+chmod u+x script_name
+```
+
+#### Méthodes d'exécution
+```bash
+# Méthode 1: Exécution directe
+./script_name
+
+# Méthode 2: Via bash
+bash script_name
+
+# Méthode 3: Via crontab (automatisé)
+# Dans crontab -e :
+*/5 * * * * /path/to/script.sh >/dev/null 2>&1
+```
+
+---
+
+## 🔍 Recherche et Filtrage Avancés
+
+### 🔎 Recherche avec Grep
+
+#### Dans les fichiers
+```bash
+# Recherche récursive simple
+grep -r 'moodle/v1/cours' ./
+
+# Recherche avancée avec exclusions
+grep -r --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist "mot_à_chercher" *
+
+# Recherche avec numéros de ligne
+grep -Hrn 'search term' path/to/files
+```
+
+#### Dans les logs
+```bash
+# Compter les occurrences d'une IP
+grep "^154.126.16.65 " /var/log/apache2/access.log | wc -l
+
+# Filtrer par type d'erreur
+cat debug.log | grep error
+```
+
+### 📁 Gestion avancée des fichiers
+
+#### Recherche par date
+```bash
+# Fichiers modifiés récemment (2 derniers jours)
+find /var/www/ -type f -mtime -2
+
+# Supprimer les anciens logs
+find /var/log/apache* -mtime +1 -exec rm {} \;
+```
+
+---
+
+## 💾 Gestion de la Mémoire Virtuelle (Swap)
+
+> 📖 **Guide complet :** [Ajouter du Swap sur Ubuntu](https://linuxize.com/post/how-to-add-swap-space-on-ubuntu-20-04/)
+
+### 🔧 Création d'un fichier Swap
+
+#### Étapes de configuration
+```bash
+# 1. Créer un fichier de 6GB pour le swap
+sudo fallocate -l 6G /swapfile
+
+# 2. Sécuriser les permissions
+sudo chmod 600 /swapfile
+
+# 3. Configurer comme zone de swap
+sudo mkswap /swapfile
+
+# 4. Activer le swap
+sudo swapon /swapfile
+
+# 5. Rendre permanent
+sudo nano /etc/fstab
+# Ajouter: /swapfile swap swap defaults 0 0
+```
+
+#### Vérification
+```bash
+# Vérifier le swap actif
+sudo swapon --show
+
+# Voir l'usage mémoire global
+sudo free -h
+```
+
+---
+
+## 🛡️ Maintenance et Surveillance
+
+### 🗄️ Nettoyage de base de données MySQL
+
+#### Purge des logs binaires
+```bash
+# Se connecter à MySQL
+sudo mysql
+
+# Purger les logs de plus d'un jour
+PURGE BINARY LOGS BEFORE DATE(NOW() - INTERVAL 1 DAY) + INTERVAL 0 SECOND;
+```
+
+### 📊 Scripts de monitoring complets
+
+#### Surveillance système globale
+```bash name=system-monitor.sh
+#!/bin/bash
+
+# Configuration
+LOG_FILE="/var/log/system-monitor.log"
+ALERT_EMAIL="admin@example.com"
+
+# Fonction de log
+log_message() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> $LOG_FILE
+}
+
+# Vérification espace disque
+DISK_USAGE=$(df / | grep / | awk '{ print $5}' | sed 's/%//g')
+RAM_USAGE=$(free -m | awk 'NR==2{printf "%.0f", $3*100/$2 }')
+CPU_LOAD=$(top -bn1 | grep "load average:" | awk '{printf "%.2f", $(NF-2)}')
+
+# Rapport de status
+REPORT="RAPPORT SYSTEME - $(date)
+
+💾 Espace disque: ${DISK_USAGE}%
+🧠 Utilisation RAM: ${RAM_USAGE}%  
+⚡ Charge CPU: ${CPU_LOAD}
+
+Seuils d'alerte:
+- Disque: 80%
+- RAM: 80%
+- CPU Load: 2.0"
+
+# Vérifications et alertes
+ALERT_NEEDED=false
+
+if [ "$DISK_USAGE" -gt 80 ]; then
+    log_message "ALERTE: Espace disque critique - $DISK_USAGE%"
+    ALERT_NEEDED=true
+fi
+
+if [ "$RAM_USAGE" -gt 80 ]; then
+    log_message "ALERTE: Mémoire RAM critique - $RAM_USAGE%"
+    ALERT_NEEDED=true
+fi
+
+# Envoyer rapport si alerte nécessaire
+if [ "$ALERT_NEEDED" = true ]; then
+    swaks -t "$ALERT_EMAIL" \
+          -s smtp.gmail.com:587 -tls \
+          -au "monitoring@example.com" \
+          -ap "app_password" \
+          -f "monitoring@example.com" \
+          --h-Subject "🚨 ALERTE SYSTEME - $HOSTNAME" \
+          --body "$REPORT"
+fi
+
+log_message "Contrôle système effectué - Disque:$DISK_USAGE% RAM:$RAM_USAGE% CPU:$CPU_LOAD"
+```
+
+---
+
+## 📚 Ressources et Documentation
+
+### 🔗 Liens Essentiels
+
+| Catégorie | Ressource | Description |
+|-----------|-----------|-------------|
+| **SSH** | [Guide OpenSSH](https://www.openssh.com/manual.html) | Documentation officielle SSH |
+| **Bash** | [Guide Bash](https://notamax.be/bash-01-apprendre-a-scripter-sur-gnu-linux/) | Initiation au scripting Bash |
+| **WP-CLI** | [Documentation Kinsta](https://kinsta.com/fr/blog/wp-cli/) | Guide complet WP-CLI |
+| **AWS CLI** | [AWS S3 Backup](https://aws.amazon.com/fr/getting-started/hands-on/backup-to-s3-cli/) | Configuration AWS CLI |
+| **Cron** | [Crontab Examples](https://geekflare.com/fr/crontab-linux-with-real-time-examples-and-tools/) | Exemples pratiques Cron |
+| **Docker** | [Docker Documentation](https://docs.docker.com/) | Guide officiel Docker |
+
+### ⚠️ Bonnes Pratiques de Sécurité
+
+#### 🔐 Authentification
+- **Clés SSH** plutôt que mots de passe
+- **Permissions restrictives** sur fichiers de clés (400)
+- **Authentification à deux facteurs** quand possible
+- **Rotation régulière** des clés et mots de passe
+
+#### 🛡️ Surveillance
+- **Monitoring automatisé** des ressources critiques
+- **Alertes email** configurées correctement  
+- **Logs centralisés** et analysés régulièrement
+- **Seuils d'alerte** adaptés à l'environnement
+
+#### 🔄 Maintenance
+- **Sauvegardes automatisées** et testées
+- **Mise à jour système** planifiée
+- **Nettoyage des logs** automatique
+- **Documentation** des procédures
+
+---
+
+## 🚨 Procédures d'Urgence
+
+### 🔧 Diagnostic Rapide
+
+#### Serveur inaccessible
+```bash
+# Vérifier les services essentiels
+sudo systemctl status ssh nginx apache2 mysql
+
+# Vérifier l'espace disque
+df -h
+
+# Vérifier la charge système
+top -bn1 | head -20
+```
+
+#### Espace disque saturé
+```bash
+# Nettoyage d'urgence
+sudo apt autoremove && sudo apt autoclean
+sudo find /var/log -name "*.log" -type f -mtime +7 -delete
+sudo find /tmp -type f -mtime +7 -delete
+
+# Identifier les gros fichiers
+sudo du -ah --max-depth=2 / | sort -rh | head -20
+```
+
+#### Mémoire RAM saturée
+```bash
+# Identifier les processus gourmands
+ps aux --sort=-%mem | head -10
+
+# Redémarrer les services si nécessaire
+sudo systemctl restart apache2
+sudo systemctl restart mysql
+```
+
+---
+
+## 📞 Support et Maintenance
+
+### 📊 Checklist de Surveillance Quotidienne
+
+- [ ] **Espace disque** < 80%
+- [ ] **Utilisation RAM** < 80%  
+- [ ] **Charge CPU** acceptable
+- [ ] **Services critiques** opérationnels
+- [ ] **Logs d'erreur** vérifiés
+- [ ] **Sauvegardes** effectuées
+
+### 🔄 Maintenance Préventive
+
+#### Hebdomadaire
+- **Nettoyage des logs** anciens
+- **Vérification des certificats** SSL
+- **Test des sauvegardes**
+- **Mise à jour des plugins** WordPress
+
+#### Mensuelle  
+- **Mise à jour système** complète
+- **Audit des permissions** fichiers
+- **Optimisation base de données**
+- **Test des procédures d'urgence**
+
+---
+
+*Document généré le 2025-08-06 08:12:34 UTC par Gerardetienne - Version 5.0 - Guide Complet d'Administration Système*
+
+# 🗄️ Guide Avancé - Base de Données et Administration Système
+
+> **Auteur :** Gerardetienne  
+> **Date de création :** 2025-01-08  
+> **Dernière mise à jour :** 2025-01-08 08:15:36 UTC  
+> **Version :** 6.0
+
+---
+
+## 📋 Table des Matières
+
+1. [💻 Shells et Environnements](#-shells-et-environnements)
+2. [🗄️ Gestion Base de Données](#️-gestion-base-de-données)
+3. [📁 Transfert de Fichiers](#-transfert-de-fichiers)
+4. [🐘 PHP et Extensions](#-php-et-extensions)
+5. [🔧 WordPress Avancé](#-wordpress-avancé)
+6. [📊 Moodle Administration](#-moodle-administration)
+7. [🛡️ Sécurité et Monitoring](#️-sécurité-et-monitoring)
+8. [⚙️ Configuration Serveur](#️-configuration-serveur)
+9. [📝 Scripts et Automatisation](#-scripts-et-automatisation)
+10. [🔍 Maintenance et Optimisation](#-maintenance-et-optimisation)
+
+---
+
+## 💻 Shells et Environnements
+
+### 🐚 Types de Shells disponibles
+
+| Shell | Description | Usage |
+|-------|-------------|--------|
+| **bash** | **Bourne Again Shell** | 99% des distributions Linux |
+| **sh** | **Bourne Shell** | Plus ancien, Unix/BSD |
+| **zsh** | **Z Shell** | Compatible Bash avec fonctionnalités avancées |
+| **csh** | **C Shell** | Syntaxe proche du langage C |
+
+### 🛠️ Gestion des fichiers système
+
+#### Vider un fichier sans le supprimer
+```bash
+echo /dev/null > fichier_a_vider
+```
+
+#### Modifier la date de dernière modification
+> 📖 **Référence :** [Script Bash pour supprimer des fichiers par période](https://webdevpro.net/script-de-bash-pour-supprimer-des-fichiers-et-dossiers-en-fonction-dune-periode/)
+
+```bash
+# Voir les informations détaillées d'un fichier
+stat file_name.txt
+
+# Afficher uniquement la date de création
+stat -c '%w' /home/user/file_name.txt
+```
+
+---
+
+## 🗄️ Gestion Base de Données
+
+> 📖 **Guide complet :** [MySQL Backup avec mysqldump](https://www.rosehosting.com/blog/how-to-create-a-backup-of-mysql-databases-using-mysqldump-on-ubuntu-20-04/)
+
+### 💾 Sauvegarde MySQL (mysqldump)
+
+#### Configuration de base locale
+```bash
+# Voir la configuration dans config.php
+define( 'DB_NAME', 'maurice' );
+define( 'DB_USER', 'maurice_user' );
+define( 'DB_PASSWORD', 'Yh0R16OFEk14EEQJd4d' );
+```
+
+#### Dump basique
+```bash
+# Sauvegarde locale
+mysqldump -u root -p moodle > backup.sql
+
+# Exemple avec credentials
+mysqldump -u root -p skiillz_30062022V1 > backup_$(date +%Y%m%d).sql
+```
+
+### ☁️ Sauvegarde depuis AWS RDS
+
+#### Export depuis RDS
+```bash
+# Commande complète avec options RDS
+mysqldump -u admin -p database_name \
+          --host=your_db_host.region.rds.amazonaws.com \
+          --set-gtid-purged=OFF \
+          --column-statistics=0 > data_$(date +%Y%m%d).sql
+
+# Avec mode verbose pour suivi
+mysqldump --verbose -u admin -p database_name \
+          --host=your_db_host.region.rds.amazonaws.com \
+          --set-gtid-purged=OFF \
+          --column-statistics=0 > data_verbose.sql
+```
+
+### 🔄 Restauration de base de données
+
+#### Restauration locale
+```bash
+# Connexion à MySQL
+mysql -u root -p
+
+# Restauration avec écrasement
+mysql --verbose -u root -p moodle < backup.sql
+```
+
+#### Restauration vers RDS
+```bash
+# Import vers AWS RDS
+mysql --verbose -u admin -p database_name \
+      --host=your_db_host.region.rds.amazonaws.com < data.sql
+```
+
+### 🗄️ Gestion des bases de données
+
+> 📖 **Référence :** [MySQL Database Management](https://gridscale.io/en/community/tutorials/mysql-datenbank-erstellen-loeschen/)
+
+#### Commandes de base MySQL
+```sql
+-- Voir les bases de données
+SHOW DATABASES;
+
+-- Créer une base
+CREATE DATABASE nom_base CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Supprimer une base
+DROP DATABASE nom_base;
+
+-- Utiliser une base
+USE nom_base;
+
+-- Voir les tables
+SHOW TABLES;
+```
+
+### 🔧 Maintenance MySQL
+
+#### Gestion des logs binaires
+```sql
+-- Voir les logs binaires
+SHOW BINARY LOGS;
+
+-- Purger les anciens logs (plus d'1 jour)
+PURGE BINARY LOGS BEFORE DATE(NOW() - INTERVAL 1 DAY) + INTERVAL 0 SECOND;
+
+-- Purger jusqu'à un log spécifique
+PURGE BINARY LOGS TO 'mysql-bin.000123';
+```
+
+#### Nettoyage d'urgence (espace disque)
+```bash
+# Arrêter MySQL
+sudo service mysql stop
+
+# Aller dans le répertoire MySQL
+cd /var/lib/mysql
+
+# Script de nettoyage (supprime la moitié des logs)
+a=`ls | grep -v relay | grep bin.index`
+b=`wc -l < $a`
+c=`echo $(($b/2))`
+head -n $c $a | cut -d "/" -f2 | xargs -I {} rm {}
+sed "1,${c}d" $a -i
+
+# Redémarrer MySQL
+sudo service mysql start
+```
+
+---
+
+## 📁 Transfert de Fichiers
+
+### 🔄 SCP (Secure Copy Protocol)
+
+#### Windows vers Ubuntu
+```bash
+# Transfert fichier local vers serveur
+scp -i yourkey.pem C:\Users\username\Desktop\doc.zip ubuntu@13.59.88.232:/home/ubuntu/
+
+# Exemple concret
+scp -i yourkey.pem C:\Users\admin\Downloads\plugin.zip ubuntu@13.247.81.209:/home/ubuntu/
+```
+
+#### Entre serveurs Ubuntu
+```bash
+# Copie récursive entre serveurs
+scp -i /home/ubuntu/key.pem -r moodledata/ ubuntu@35.180.238.88:/home/ubuntu/
+
+# Transfert de fichier unique
+scp -i key.pem file.sql ubuntu@remote-server:/path/destination/
+```
+
+### 🌐 Téléchargement direct
+
+#### Avec curl
+```bash
+# Télécharger un fichier
+curl -O https://download.moodle.org/stable400/moodle-4.0.5.tgz
+
+# Avec progression
+curl -# -O https://wordpress.org/latest.zip
+```
+
+#### Avec wget
+```bash
+# Téléchargement simple
+wget https://download.moodle.org/stable400/moodle-4.0.5.tgz
+
+# Téléchargement en arrière-plan
+wget -b https://example.com/large-file.zip
+```
+
+---
+
+## 🐘 PHP et Extensions
+
+### 🔄 Gestion des versions PHP
+
+#### Mise à jour PHP
+```bash
+# Ajouter le repository Ondrej
+sudo apt-add-repository ppa:ondrej/php
+sudo apt-get update
+
+# Réparer les dépendances cassées
+sudo apt --fix-broken install
+
+# Installer la nouvelle version
+sudo apt-get install php7.4
+```
+
+#### Installation des extensions requises
+```bash
+# Extensions MySQL
+sudo apt-get install php7.4-mysql
+
+# Extensions complètes pour Moodle/WordPress
+sudo apt-get install php7.4-xml php7.4-xmlrpc php7.4-mbstring \
+                     php7.4-curl php7.4-zip php7.4-gd php7.4-intl \
+                     php7.4-soap php7.4-sodium
+```
+
+#### Changement de version Apache
+```bash
+# Désactiver l'ancienne version
+sudo a2dismod php7.2
+
+# Activer la nouvelle version
+sudo a2enmod php7.4
+
+# Redémarrer Apache
+sudo systemctl restart apache2
+```
+
+### 🧪 Extensions spéciales
+
+#### SOAP pour Moodle
+> 📖 **Référence :** [Installation SOAP Extension](https://stackoverflow.com/questions/2509143/how-do-i-install-soap-extension)
+
+```bash
+# Installation selon version PHP
+sudo apt install php7.4-soap
+sudo service apache2 restart
+
+# Vérifier dans php.ini que l'extension est activée
+# extension=soap (décommenter si nécessaire)
+```
+
+#### Sodium pour cryptographie
+```bash
+# Vérifier si installé
+php -i | grep sodium
+
+# Installer si nécessaire
+sudo apt install php-sodium
+
+# Redémarrer Apache
+sudo /etc/init.d/apache2 restart
+```
+
+#### Vérification des extensions
+```bash
+# Lister toutes les extensions installées
+php -m | more
+
+# Voir les informations PHP
+php -i | less
+```
+
+### ⚙️ Configuration PHP
+
+#### Localisation fichiers de configuration
+
+**Bitnami :**
+```bash
+# Fichier php.ini Bitnami
+nano /opt/bitnami/php/etc/php.ini
+```
+
+**Ubuntu standard :**
+```bash
+# Configuration Apache
+nano /etc/php/7.4/apache2/php.ini
+
+# Configuration CLI
+nano /etc/php/7.4/cli/php.ini
+```
+
+#### Vérifications système
+```bash
+# Version PHP
+php -v
+
+# Version MySQL
+mysql -V
+
+# Configuration MySQL pour versions < 8.0
+echo "default_storage_engine = innodb
+innodb_file_per_table = 1
+innodb_file_format = Barracuda" | sudo tee -a /etc/mysql/mysql.conf.d/mysqld.cnf
+```
+
+---
+
+## 🔧 WordPress Avancé
+
+### 🎯 WP-CLI pour versions WordPress
+
+> 📖 **Guide complet :** [WordPress Version Management](https://wpbeaches.com/upgrade-downgrade-website-versions-of-wordpress-with-wp-cli/)
+
+#### Gestion des versions
+```bash
+# Voir la version actuelle
+wp core version
+
+# Mettre à jour vers version spécifique
+wp core update --version=5.9.4 --force
+
+# Télécharger version spécifique (sans contenu)
+wp core download --skip-content --force --version=5.1.4
+
+# Mise à jour vers dernière version
+wp core update
+```
+
+#### Résolution des erreurs
+```bash
+# En cas d'erreur de mise à jour bloquée
+wp option delete core_updater.lock
+```
+
+### 🛡️ Contrôle des mises à jour automatiques
+
+> 📖 **Guide :** [Désactiver mises à jour WordPress](https://wpformation.com/desactiver-mises-a-jour-wordpress/)
+
+#### Dans wp-config.php
+```php
+// Désactiver toutes les mises à jour automatiques
+define( 'AUTOMATIC_UPDATER_DISABLED', true );
+
+// Désactiver uniquement les mises à jour majeures
+define( 'WP_AUTO_UPDATE_CORE', false );
+
+// Activer uniquement les mises à jour mineures
+define( 'WP_AUTO_UPDATE_CORE', 'minor' );
+
+// Désactiver le cron WordPress (pour gestion manuelle)
+define('DISABLE_WP_CRON', true);
+```
+
+### 🔧 Sécurité WordPress après piratage
+
+#### Nettoyage d'urgence
+```bash
+# Supprimer .htaccess corrompu
+ls -la
+rm .htaccess
+
+# Voir les fichiers cachés malveillants
+find . -name "*.php" -type f -exec grep -l "base64_decode\|eval(" {} \;
+```
+
+#### Blocage IP avec htaccess
+> 📖 **Guide :** [Bloquer IP WordPress](https://wpcours.com/wp-tutoriels/bloquer-ip-acces-wordpress/)
+
+```apache
+order allow,deny
+deny from 192.168.2.2
+deny from 10.130.131.6
+deny from 172.16.131.106
+allow from all
+```
+
+#### Restauration propre
+```bash
+# 1. Sauvegarder wp-content et wp-config.php
+cp -r wp-content wp-content-backup
+cp wp-config.php wp-config-backup.php
+
+# 2. Voir version WordPress actuelle
+wp core version --allow-root
+
+# 3. Télécharger WordPress propre de même version
+# Vider le répertoire et extraire WordPress neuf
+
+# 4. Restaurer les fichiers sauvegardés
+cp -r wp-content-backup/* wp-content/
+cp wp-config-backup.php wp-config.php
+
+# 5. Corriger les permissions
+find . -type d -exec chmod 755 {} \;
+find . -type f -exec chmod 664 {} \;
+chown -R www-data:www-data .
+```
+
+---
+
+## 📊 Moodle Administration
+
+### 📚 Guides d'installation
+
+> 📖 **Références officielles :**
+> - [CloudCone Moodle Guide](https://cloudcone.com/docs/article/how-to-install-moodle-on-ubuntu-18-04/)
+> - [Moodle Official Ubuntu Guide](https://docs.moodle.org/400/en/Step-by-step_Installation_Guide_for_Ubuntu)
+
+### 🔄 Mise à jour Moodle
+
+> 📖 **Guide officiel :** [Moodle Upgrading](https://docs.moodle.org/400/en/Upgrading)
+
+#### Dossiers à sauvegarder (plugins indépendants)
+```bash
+# Dossiers critiques à préserver
+cp -r filter filter-backup
+cp -r blocks blocks-backup  
+cp -r mod mod-backup
+cp -r themes themes-backup
+```
+
+#### URLs d'administration
+```bash
+# Accès upgrade Moodle
+https://your-domain.com/admin/index.php?confirmupgrade=1&confirmrelease=1&showallplugins=1&cache=0
+
+# Statistiques Moodle (après login admin)
+https://cours.skiillz.com/my/
+```
+
+---
+
+## 🛡️ Sécurité et Monitoring
+
+### 🔍 Surveillance réseau et trafic
+
+#### Installation ifstat
+```bash
+# Installer ifstat pour monitoring réseau
+sudo apt-get install ifstat
+
+# Surveiller le trafic réseau
+ifstat -l
+```
+
+### 👥 Gestion des processus
+
+#### Surveillance des processus
+```bash
+# Vue interactive des processus
+htop
+
+# Vue arborescente
+ps aux --forest
+
+# Tuer un processus
+kill PID_NUMBER
+```
+
+### ⚡ Optimisation Apache MPM
+
+#### Configuration Worker MPM
+> 📖 **Référence :** [Apache MaxRequestWorkers](https://stackoverflow.com/questions/36924952/ah00161-server-reached-maxrequestworkers-setting-consider-raising-the-maxreque)
+
+```apache
+# /etc/apache2/mods-available/mpm_worker.conf
+<IfModule mpm_worker_module>
+    StartServers             2
+    MinSpareThreads          25
+    MaxSpareThreads          75
+    ThreadLimit              64
+    ThreadsPerChild          25
+    MaxRequestWorkers        150
+    MaxConnectionsPerChild   0
+    ServerLimit              256
+</IfModule>
+```
+
+#### Configuration Prefork MPM
+```apache
+# /etc/apache2/mods-enabled/mpm_prefork.conf
+<IfModule mpm_prefork_module>
+    StartServers             5
+    MinSpareServers          5
+    MaxSpareServers          10
+    MaxRequestWorkers        150
+    MaxConnectionsPerChild   0
+</IfModule>
+```
+
+### 📊 Calcul des ressources
+
+#### Formule MaxRequestWorkers
+```bash
+# Calcul recommandé
+# MaxRequestWorkers = RAM_disponible / RAM_par_processus
+
+# Exemple avec 8GB RAM, 50MB par processus :
+# 8000 MB / 50 MB = 160
+# Donc MaxRequestWorkers = 160
+```
+
+#### Diagnostic Apache
+```bash
+# Voir le module MPM utilisé
+apache2ctl -V | grep MPM
+
+# Voir tous les modules actifs
+apache2ctl -M
+
+# Compter les processus Apache
+ps aux | grep apache | wc -l
+
+# Voir configuration actuelle
+egrep 'MaxRequestWorkers|ServerLimit' /etc/apache2/mods-enabled/mpm_prefork.conf
+```
+
+---
+
+## ⚙️ Configuration Serveur
+
+### 💾 Extension d'espace disque (AWS)
+
+> 📖 **Guide AWS :** [Recognize Expanded Volume Linux](https://docs.aws.amazon.com/fr_fr/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html)
+
+#### Étapes d'extension
+```bash
+# 1. Voir la liste des espaces
+lsblk
+
+# 2. Étendre la partition (selon lsblk)
+sudo growpart /dev/nvme0n1 1
+
+# 3a. Si système XFS
+sudo xfs_growfs -d /
+
+# 3b. Si système Ext4
+sudo resize2fs /dev/nvme0n1p1
+
+# Pour type xvda (EC2 plus anciens)
+sudo growpart /dev/xvda 1
+sudo xfs_growfs -d /
+```
+
+### 🌐 phpMyAdmin Bitnami
+
+> 📖 **Guide officiel :** [Access phpMyAdmin Bitnami](https://docs.bitnami.com/aws/faq/get-started/access-phpmyadmin/)
+
+#### Tunnel SSH pour accès local
+```bash
+# Créer tunnel SSH vers port 8888
+ssh -N -L 8888:127.0.0.1:80 -i LightsailV2.pem bitnami@your-domain.com
+
+# Exemple concret
+ssh -N -L 8888:127.0.0.1:80 -i "LightsailDefaultKey-eu-west-3.pem" bitnami@15.237.52.208
+
+# Accès via navigateur local
+# http://127.0.0.1:8888/phpmyadmin/
+```
+
+---
+
+## 📝 Scripts et Automatisation
+
+### 🔁 Boucles Bash avancées
+
+> 📖 **Référence :** [Loop Over Files in Bash](https://www.delftstack.com/fr/howto/linux/loop-over-files-in-bash/)
+
+#### Parcours de fichiers
+```bash
+# Afficher tous les fichiers du répertoire
+for file in *; do echo $file; done
+
+# Écrire dans tous les fichiers
+for file in *; do echo -e "$file\nHello World!" > $file; done
+
+# Créer des sauvegardes
+for file in *; do cp $file "$file.bak"; done
+
+# Copier vers un autre répertoire
+for filedir in *; do cp -r $filedir /mnt/efs/destination/ -v; done
+```
+
+### 🔍 Recherche et remplacement
+
+#### Remplacement de texte avec sed
+> 📖 **Guide :** [Find and Replace with sed](https://www.cyberciti.biz/faq/how-to-use-sed-to-find-and-replace-text-in-files-in-linux-unix-shell/)
+
+```bash
+# Remplacement simple
+sudo sed -i 's/height: 60px/height: 80px/g' moderation/index.html
+
+# Remplacement dans tous les fichiers du répertoire
+sed -i 's/ancienne_chaine/nouvelle_chaine/g' *
+
+# Sauvegarde automatique avant modification
+sed -i.bak 's/old/new/g' file.txt
+```
+
+#### Recherche de fichiers
+```bash
+# Chercher un nom de fichier spécifique
+find . -name 'subscribe.php' -print
+
+# Chercher du contenu dans les fichiers
+grep -r 'texte_recherche' ./
+
+# Filtrer les logs WordPress
+tail -f debug.log | grep error
+```
+
+### 🧹 Scripts de nettoyage
+
+#### Nettoyage des logs système
+> 📖 **Référence :** [Log File Management Ubuntu](https://unix.stackexchange.com/questions/130786/can-i-remove-files-in-var-log-journal-and-var-cache-abrt-di-usr)
+
+```bash
+# Voir l'espace occupé par les journaux
+journalctl --disk-usage
+
+# Nettoyer jusqu'à une taille limite
+sudo journalctl --vacuum-size=500M
+
+# Configuration permanente dans /etc/systemd/journald.conf
+echo "SystemMaxUse=50M" | sudo tee -a /etc/systemd/journald.conf
+sudo systemctl restart systemd-journald.service
+```
+
+#### Nettoyage syslog
+```bash
+# Vider le syslog
+sudo > /var/log/syslog
+sudo systemctl restart syslog
+```
+
+#### Configuration logrotate
+```bash
+# Éditer la configuration rsyslog
+sudo nano /etc/logrotate.d/rsyslog
+
+# Ajouter configuration avec limite de taille
+/var/log/syslog
+{
+    rotate 7
+    daily
+    maxsize 1G
+    missingok
+    notifempty
+    delaycompress
+    compress
+    postrotate
+        /usr/lib/rsyslog/rsyslog-rotate
+    endscript
+}
+```
+
+---
+
+## 🔍 Maintenance et Optimisation
+
+### 📂 Gestion avancée des fichiers
+
+#### Docker - Résolution problème base de données
+```bash
+# Voir les conteneurs actifs
+docker ps
+
+# Inspecter la configuration réseau
+docker inspect nom_container_database
+# Récupérer l'IPAddress
+
+# Modifier wp-config.php avec la nouvelle IP
+define( 'DB_HOST', '172.18.0.2' ); // IP du conteneur
+```
+
+### 🔧 Exécution de fichiers PHP
+```bash
+# Exécuter un script PHP en ligne de commande
+php test.php
+
+# Avec affichage des erreurs
+php -d display_errors=1 test.php
+```
+
+### 🌐 Contrôle d'accès et sécurité
+
+#### Blocage de sites (pare-feu applicatif)
+> 📖 **Référence :** [Bloquer accès sites](https://sospc.name/bloquer-acces-sites/)
+
+#### Gestion des logs journaux
+```bash
+# Contrôler et supprimer fichiers journal Ubuntu
+# Répertoire principal des journaux
+ls -la /var/log/journal/
+
+# Nettoyer selon la taille
+sudo journalctl --vacuum-size=100M
+
+# Nettoyer selon l'âge
+sudo journalctl --vacuum-time=7d
+```
+
+---
+
+## 📚 Ressources et Documentation
+
+### 🔗 Références Essentielles
+
+| Catégorie | Ressource | Description |
+|-----------|-----------|-------------|
+| **MySQL** | [RoseHosting MySQL Backup](https://www.rosehosting.com/blog/how-to-create-a-backup-of-mysql-databases-using-mysqldump-on-ubuntu-20-04/) | Guide complet mysqldump |
+| **Moodle** | [Official Installation Guide](https://docs.moodle.org/400/en/Step-by-step_Installation_Guide_for_Ubuntu) | Installation Ubuntu officielle |
+| **WordPress** | [WP-CLI Version Management](https://wpbeaches.com/upgrade-downgrade-website-versions-of-wordpress-with-wp-cli/) | Gestion versions WordPress |
+| **Apache** | [MaxRequestWorkers Tuning](https://bobcares.com/blog/server-reached-maxrequestworkers-setting/) | Optimisation Apache |
+| **PHP** | [SOAP Extension Install](https://stackoverflow.com/questions/2509143/how-do-i-install-soap-extension) | Installation extensions PHP |
+| **Bash** | [Loop Over Files](https://www.delftstack.com/fr/howto/linux/loop-over-files-in-bash/) | Scripts Bash avancés |
+
+### ⚠️ Bonnes Pratiques de Production
+
+#### 🔐 Sécurité Base de Données
+- **Sauvegardes automatisées** quotidiennes
+- **Rotation des logs** binaires MySQL
+- **Monitoring espace disque** en continu
+- **Accès restreint** aux utilisateurs privilégiés
+
+#### 🛡️ Sécurité Web
+- **Mise à jour régulière** des CMS (WordPress, Moodle)
+- **Monitoring des plugins** et thèmes
+- **Scanning antivirus** périodique
+- **Blocage IP** automatisé pour attaques
+
+#### ⚡ Performance
+- **Optimisation Apache MPM** selon ressources
+- **Cache approprié** pour applications
+- **Compression gzip** activée
+- **Monitoring ressources** CPU/RAM/Disk
+
+---
+
+## 🚨 Procédures d'Urgence
+
+### 🔧 Base de Données Corrompue
+
+#### MySQL ne démarre pas
+```bash
+# Vérifier les logs MySQL
+sudo tail -f /var/log/mysql/error.log
+
+# Réparation InnoDB
+sudo mysqld --innodb-force-recovery=1
+
+# Dump d'urgence si possible
+mysqldump --single-transaction --all-databases > emergency_backup.sql
+```
+
+#### Espace disque saturé par logs
+```bash
+# Nettoyage d'urgence logs MySQL
+sudo service mysql stop
+cd /var/lib/mysql
+sudo rm mysql-bin.0*
+sudo service mysql start
+
+# Nettoyage logs système
+sudo journalctl --vacuum-size=50M
+sudo > /var/log/syslog
+```
+
+### 🌐 Site Web inaccessible
+
+#### WordPress/Moodle compromis
+```bash
+# 1. Isoler le site
+sudo a2dissite site-name
+
+# 2. Scanner les fichiers malveillants
+find /var/www/site/ -name "*.php" -exec grep -l "base64_decode\|eval(" {} \;
+
+# 3. Restaurer depuis sauvegarde propre
+# 4. Mettre à jour tous les composants
+# 5. Changer tous les mots de passe
+```
+
+#### Apache surchargé
+```bash
+# Redémarrage d'urgence
+sudo systemctl restart apache2
+
+# Vérifier les processus
+ps aux | grep apache | wc -l
+
+# Ajuster configuration MPM si nécessaire
+sudo nano /etc/apache2/mods-enabled/mpm_prefork.conf
+```
+
+---
+
+## 📞 Support et Maintenance
+
+### 📊 Checklist Maintenance Hebdomadaire
+
+- [ ] **Sauvegardes** base de données vérifiées
+- [ ] **Espace disque** > 20% libre
+- [ ] **Logs MySQL** purgés (> 7 jours)
+- [ ] **Extensions PHP** à jour
+- [ ] **CMS et plugins** mis à jour
+- [ ] **Certificats SSL** valides
+- [ ] **Monitoring** Apache MPM configuré
+
+### 🔄 Procédures Mensuelles
+
+#### Optimisation Base de Données
+```bash
+# Optimisation tables MySQL
+mysqlcheck -u root -p --optimize --all-databases
+
+# Réparation si nécessaire  
+mysqlcheck -u root -p --repair --all-databases
+
+# Analyse des performances
+mysql -u root -p -e "SHOW FULL PROCESSLIST;"
+```
+
+#### Audit Sécurité
+```bash
+# Recherche fichiers suspects
+find /var/www/ -name "*.php" -mtime -7 -exec grep -l "eval\|base64_decode" {} \;
+
+# Vérification permissions
+find /var/www/ -type f -perm 0777
+find /var/www/ -type d -perm 0777
+
+# Analyse logs accès
+awk '{print $1}' /var/log/apache2/access.log | sort | uniq -c | sort -nr | head -20
+```
+
+---
+
+*Document généré le 2025-01-08 08:15:36 UTC par Gerardetienne - Version 6.0 - Guide Avancé Base de Données et Administration Système*
+
+</SimpleAuth>

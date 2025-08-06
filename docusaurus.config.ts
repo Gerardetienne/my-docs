@@ -124,7 +124,7 @@ projectName: 'my-docs', // nom EXACT du repo
           label: 'Linux-astuce',
     
           type: 'doc',
-          docId: 'Linux-astuce/serveur',
+          docId: 'Linux-astuce/document',
         },
 
           ]

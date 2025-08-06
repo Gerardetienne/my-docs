@@ -1,0 +1,1918 @@
+---
+title: LINUX Divers
+---
+
+import SimpleAuth from '@site/src/components/SimpleAuth';
+
+<SimpleAuth>
+
+
+**Cela vous forcera syslogà "tourner" (c'est-à-dire créer un nouveau fichier journal et archiver le fichier journal précédent) après 1 jour ou lorsque le fichier atteint 1 Go, selon la première éventualité. Notez que cela rotate 7signifie que votre système ne conservera que 7 syslogsauvegardes au total, de sorte qu'il ne peut occuper que 7 Go d'espace
+Remarque : vous pouvez modifier maxsize, rotate Net d'autres paramètres pour personnaliser vos journaux. Utilisez la commande man logrotatepour en savoir plus.**
+
+
+# 📚 Guide Technique Complet - Administration Système et Web
+
+> **Auteur :** Gerard Etienne  
+> **Date de création :** 2025-08-06  
+> **Dernière mise à jour :** 2025-08-06 07:56:04 UTC  
+> **Version :** 1.0
+
+---
+
+## 📋 Table des Matières
+
+1. [🌐 Outils Web et Formatage](#-outils-web-et-formatage)
+2. [🎓 Gestion Moodle](#-gestion-moodle)
+3. [🖥️ Administration Ubuntu](#️-administration-ubuntu)
+4. [📦 Compression et Archivage](#-compression-et-archivage)
+5. [☁️ Configuration Cloud](#️-configuration-cloud)
+6. [🔧 Gestion Serveur Bitnami](#-gestion-serveur-bitnami)
+7. [🔍 Recherche et Filtrage](#-recherche-et-filtrage)
+8. [⚡ Optimisation Apache](#-optimisation-apache)
+9. [🛡️ Sécurité WordPress](#️-sécurité-wordpress)
+10. [🐘 Gestion Versions PHP](#-gestion-versions-php)
+11. [📁 Extraction Archives WordPress](#-extraction-archives-wordpress)
+
+---
+
+## 🌐 Outils Web et Formatage
+
+### Réindentation HTML
+
+**Outil recommandé :** [Code Beautify HTML Viewer](https://codebeautify.org/htmlviewer)
+
+> 💡 **Astuce :** Cet outil permet de formater et d'indenter automatiquement votre code HTML pour une meilleure lisibilité.
+
+---
+
+## 🎓 Gestion Moodle
+
+### Mode Maintenance
+
+#### ✅ Activer le mode maintenance
+```bash
+sudo -u www-data php admin/cli/maintenance.php --enable
+```
+
+#### ❌ Désactiver le mode maintenance
+```bash
+sudo -u www-data php admin/cli/maintenance.php --disable
+```
+
+### Mise à jour Moodle
+
+#### 🔄 Mettre à jour vers la version finale
+```bash
+sudo -u www-data php admin/cli/upgrade.php
+```
+
+### 🧹 Vider le cache Moodle
+```bash
+sudo -u www-data php admin/cli/purge_caches.php
+```
+> 📖 **Documentation :** [Administration via Command Line](https://docs.moodle.org/39/en/Administration_via_command_line#Running_CLI_scripts)
+
+### ⚙️ Configuration de redirection
+
+Pour modifier l'URL de redirection **"mes cours"** :
+```bash
+nano /var/www/html/lib/navigationlib.php
+```
+
+### 🔧 Résolution d'erreurs après migration
+
+**Erreur fréquente :**
+```
+Call to undefined function enrol_lti_get_fontawesome_icon_map();
+```
+
+**Solution :**
+1. Vider le cache de Moodle avec la commande ci-dessus
+2. Redémarrer le serveur web si nécessaire
+
+---
+
+## 🖥️ Administration Ubuntu
+
+### 🌐 Afficher l'IP du serveur
+```bash
+hostname -I
+```
+
+### 🔧 Mise à jour plugin WordPress
+```bash
+wp plugin update jet-elements --version=2.6.9 --allow-root
+```
+
+---
+
+## 📦 Compression et Archivage
+
+> 📖 **Documentation complète :** [Guide Linux - Archivage et Compression](https://linux.goffinet.org/administration/arborescence-de-fichiers/archivage-et-compression/)
+
+### Options de compression
+
+| Option | Description |
+|--------|-------------|
+| **z** | Compression **Gunzip** |
+| **j** | Compression **Bzip2** |
+
+### 📁 Créer une archive compressée
+```bash
+tar cvzf usr_share_doc.tar.gz /usr/share/doc
+```
+
+### 📂 Extraire une archive tar.gz
+```bash
+tar xvzf usr_share_doc.tar.gz
+```
+
+---
+
+## ☁️ Configuration Cloud
+
+### 🗄️ S3 Storage Backup
+
+#### Configuration des buckets
+
+| Environnement | Région | Bucket |
+|---------------|--------|--------|
+| **Moodle Studio** | Paris [eu-west-3] | `suiteadobe` |
+| **MoodleV4** | La Cap [us-east-1] | `www-skiillz-com` |
+
+#### 💾 Bases de données
+1. **admin** → `moodle` (backup Moodle 4.0.5 + cours Mahandry)
+2. **adminV3** → `moodleV3`
+
+### 📊 Google Tag Manager
+
+**Guide complet :** [Configuration GTM avec Google Analytics](https://www.optimisation-conversion.com/webanalytics/guide-complet-configurer-google-tag-manager-google-analytics/)
+
+---
+
+## 🔧 Gestion Serveur Bitnami
+
+> 📖 **Documentation officielle :** [Bitnami Control Services](https://docs.bitnami.com/aws/faq/administration/control-services/)
+
+### 🔄 Commandes de redémarrage
+
+#### Redémarrer Apache uniquement
+```bash
+sudo /opt/bitnami/ctlscript.sh restart apache2
+```
+
+#### Démarrer tous les services
+```bash
+sudo /opt/bitnami/ctlscript.sh start
+```
+
+#### Redémarrer tous les services
+```bash
+sudo /opt/bitnami/ctlscript.sh restart
+```
+
+#### Vérifier le statut des services
+```bash
+sudo /opt/bitnami/ctlscript.sh status
+```
+
+---
+
+## 🔍 Recherche et Filtrage
+
+### 🔎 Filtrer les erreurs avec Grep
+
+#### Recherche basique
+```bash
+grep "error" fichier.txt
+```
+
+#### Recherche insensible à la casse
+```bash
+grep -i "error" fichier.txt
+```
+
+#### Recherche multiple
+```bash
+grep -i -e "error" -e "erreur" fichier.txt
+```
+
+### 🗂️ Recherche dans tous les fichiers d'un répertoire
+
+> 📖 **Guide complet :** [Recherche de chaînes de caractères sur Linux](https://www.journaldunet.fr/web-tech/developpement/1202655-comment-retrouver-tous-les-fichiers-contenant-une-chaine-de-caracteres-sur-linux/)
+
+#### Syntaxe générale
+```bash
+grep -rnw 'dossier_de_recherche' -e 'expression_à_rechercher'
+```
+
+#### Exemple - Recherche dans les fichiers PHP
+```bash
+grep --include=*.php -rnw 'dossier_de_recherche' -e 'expression_à_rechercher'
+
+# Exemple concret
+grep --include=*.php -rnw 'woocommerce' -e '_fields'
+```
+
+---
+
+## ⚡ Optimisation Apache
+
+### 🚨 Erreur MaxRequestWorkers
+
+**Erreur :** `AH00161: server reached MaxRequestWorkers setting`
+
+> 📖 **Références :**
+> - [Solution Stack Overflow 1](https://stackoverflow.com/questions/36924952/ah00161-server-reached-maxrequestworkers-setting-consider-raising-the-maxreque#comment66444651_37057176)
+> - [Solution Stack Overflow 2](https://stackoverflow.com/questions/45344604/ubuntu-apache-error-server-reached-maxrequestworkers-on-increase-to-1024)
+
+#### 🔧 Solution recommandée
+
+1. **Augmenter MaxRequestWorkers** de 150 à 500
+2. **Augmenter ServerLimit** à 512 (défaut: 256)
+
+```bash
+cd /etc/apache2/mods-enabled
+nano mpm_prefork.conf
+systemctl restart apache2
+```
+
+**Configuration à ajouter dans `mpm_prefork.conf` :**
+```apache
+ServerLimit 512
+MaxRequestWorkers 500
+```
+
+---
+
+## 🛡️ Sécurité WordPress
+
+### 🚫 Bloquer les attaques XML-RPC
+
+> 📖 **Guide détaillé :** [Prévention des attaques XML-RPC](https://linuxhostsupport.com/blog/how-to-prevent-xml-rpc-attacks-on-your-wordpress-site/)
+
+#### 📁 Fichier de configuration Apache
+```
+/etc/apache2/sites-available/000-default.conf
+```
+
+### Méthodes de blocage XML-RPC
+
+#### 🔐 Méthode 1 : wp-config.php
+
+> 📖 **Références :**
+> - [Guide Bloginfos](https://bloginfos.com/desactiver-xml-rpc/)
+> - [Guide Debugbar](https://www.debugbar.com/fr/bloquer-xml-rpc-wordpress/)
+> - [Guide WinAstuce](https://www.winastuce.com/desactiver-xml-rpc-wordpress-proteger-attaques-ddos)
+
+Ajouter à la fin du fichier `wp-config.php` **après** la dernière instruction `ABSPATH` :
+```php
+add_filter('xmlrpc_enabled', '__return_false');
+```
+
+#### 🔐 Méthode 2 : functions.php
+
+Ajouter dans le fichier `functions.php` du thème ou dans un plugin spécifique :
+```php
+add_action("init", function() {
+    global $pagenow; // get current page
+    if ( !empty($pagenow) && "xmlrpc.php" === $pagenow ) {
+        header("HTTP/1.1 403 Forbidden" ); // Produit une erreur 403
+        exit; // exit request
+    } 
+    return;
+});
+```
+
+### 📊 Compter les occurrences d'attaques
+
+> 📖 **Guide :** [Compter les occurrences - Linux](https://www.devkb.org/linux/55-Compter-le-nombre-d-occurence-d-un-mot-dans-un-fichier-Linux)
+
+#### Méthode 1
+```bash
+cat access.log.1 | grep "POST /xmlrpc.php" | wc -l
+```
+
+#### Méthode 2 (recommandée)
+```bash
+grep -o 'POST /xmlrpc.php' access.log.1 | wc -l
+```
+
+---
+
+## 🐘 Gestion Versions PHP
+
+### 🔍 Vérifier la version actuelle
+```bash
+php -v
+```
+
+### 📦 Installation du dépôt PHP
+```bash
+sudo add-apt-repository -y ppa:ondrej/php
+sudo apt update
+```
+
+### 🆕 Installer une nouvelle version
+```bash
+sudo apt install php8.1
+```
+
+### 🔄 Migration PHP 8.x vers PHP 7.x
+
+> 📖 **Guide complet :** [Switch Between Multiple PHP Versions](https://ostechnix.com/how-to-switch-between-multiple-php-versions-in-ubuntu/)
+
+#### Étape 1 : Désactiver PHP 8.1
+```bash
+sudo a2dismod php8.1
+```
+
+#### Étape 2 : Activer PHP 7.4
+```bash
+sudo a2enmod php7.4
+```
+
+#### Étape 3 : Définir PHP 7.4 par défaut
+```bash
+sudo update-alternatives --set php /usr/bin/php7.4
+sudo systemctl restart apache2
+sudo service php7.4-fpm restart
+sudo apt install php7.4-mysql php7.4-mbstring php7.4-xml php7.4-curl
+```
+
+#### 🔧 Alternative : Choisir interactivement
+```bash
+sudo update-alternatives --config php
+```
+
+#### Étape finale : Redémarrer Apache
+```bash
+sudo systemctl restart apache2
+```
+
+---
+
+## 📁 Extraction Archives WordPress
+
+### 🛠️ Outil wpress-extract
+
+> 📖 **Repository GitHub :** [wpress-extract](https://github.com/ofhouse/wpress-extract)
+
+#### Installation locale
+```bash
+apt install npm
+npm i -g wpress-extract
+```
+
+#### Utilisation
+```bash
+wpress-extract your-migration.wpress
+```
+
+---
+
+## 📝 Notes et Bonnes Pratiques
+
+### ⚠️ Avertissements Importants
+
+- Toujours effectuer des **sauvegardes** avant les modifications
+- Tester les changements sur un **environnement de développement**
+- Documenter toutes les modifications effectuées
+- Vérifier les **logs d'erreurs** après chaque intervention
+
+### 🔗 Ressources Utiles
+
+| Ressource | Description |
+|-----------|-------------|
+| **Moodle Docs** | Documentation officielle Moodle |
+| **Apache Docs** | Documentation serveur Apache |
+| **Ubuntu Manpages** | Manuel des commandes Ubuntu |
+| **Stack Overflow** | Communauté de développeurs |
+
+---
+
+## 📞 Support et Contact
+
+Pour toute question ou problème technique, n'hésitez pas à consulter :
+- Les logs système : `/var/log/`
+- Les logs Apache : `/var/log/apache2/`
+- Les logs Moodle : `[moodle]/admin/tool/log/`
+
+---
+
+
+
+
+
+
+
+# ☁️ Guide d'Administration AWS et Système
+
+> **Auteur :** Gerard Etienne  
+> **Date de création :** 2025-08-06  
+> **Dernière mise à jour :** 2025-08-06 08:00:43 UTC  
+> **Version :** 2.0
+
+---
+
+## 📋 Table des Matières
+
+1. [🏗️ Configuration AWS](#️-configuration-aws)
+2. [🛡️ Sécurité Apache et htaccess](#️-sécurité-apache-et-htaccess)
+3. [⚡ Monitoring et Performance](#-monitoring-et-performance)
+4. [🚀 Développement React](#-développement-react)
+5. [🗄️ Base de Données MySQL](#️-base-de-données-mysql)
+6. [📊 Analyse de Logs](#-analyse-de-logs)
+7. [🔧 Configuration Serveur Web](#-configuration-serveur-web)
+8. [🌐 Outils et Utilitaires](#-outils-et-utilitaires)
+
+---
+
+## 🏗️ Configuration AWS
+
+### 📖 Documentation Officielle
+**Guide de sauvegarde S3 :** [AWS S3 CLI Backup Tutorial](https://aws.amazon.com/fr/getting-started/hands-on/backup-to-s3-cli/)
+
+### 🗄️ Connexions Base de Données RDS
+
+#### Endpoint de connexion
+```
+skiillz-testv1.crnkf2phow3d.eu-west-1.rds.amazonaws.com
+```
+
+#### 🔌 Commandes de connexion MySQL
+```bash
+# Connexion standard
+mysql -u admin -p -h skiillz-testv1.crnkf2phow3d.eu-west-1.rds.amazonaws.com
+
+# Connexion avec base spécifiée
+mysql -u admin -p -h skiillz-testv1.crnkf2phow3d.eu-west-1.rds.amazonaws.com -D nom_base
+```
+
+---
+
+## 🛡️ Sécurité Apache et htaccess
+
+### 🚫 Bloquer une adresse IP
+
+> 📖 **Guide complet :** [htaccess WordPress - WP Marmite](https://wpmarmite.com/htaccess-wordpress/)
+
+#### Configuration htaccess pour blocage IP
+```apache
+<Limit GET POST>
+    order allow,deny
+    deny from xxx.xxx.xxx.xxx
+    allow from all
+</Limit>
+```
+
+### ⬆️ Mise à jour Apache2
+
+> 📖 **Références :**
+> - [Upgrade Apache Ubuntu](https://www.linuxcapable.com/upgrade-apache-on-ubuntu-linux/)
+> - [Fix Apache2 Common Problems](https://upcloud.com/resources/tutorials/fix-common-problems-apache2)
+
+#### 🔄 Commandes de mise à jour
+```bash
+# Mise à jour générale du système
+sudo apt upgrade
+
+# Mise à jour spécifique d'Apache2
+sudo apt upgrade apache2
+
+# Rechargement de la configuration
+sudo systemctl reload apache2
+```
+
+---
+
+## ⚡ Monitoring et Performance
+
+### 🧠 Script de surveillance RAM
+
+#### 📧 Configuration d'alerte email
+```bash
+swaks -t "gerard@eufonie.fr,herison@eufonie.fr,jules@eufonie.fr" \
+      -s smtp.gmail.com:587 -tls \
+      -au fanomezantsoa542@gmail.com \
+      -ap your_mdp_app \
+      -f fanomezantsoa542@gmail.com \
+      --h-Subject "Alert Memoire serveur SKIILLZ" \
+      --body "Votre utilisation de mémoire RAM atteint plus de 80% de votre ressource disponible pour éviter les pannes de serveur, vous devez vérifier les requêtes en cours d'exécution !"
+```
+
+#### 📊 Script de vérification RAM
+```bash name=checkRam.sh
+#!/bin/bash
+
+# Obtient le pourcentage d'utilisation de la mémoire RAM
+ram_usage=$(free | awk '/Mem/ {printf("%.2f"), $3/$2 * 100}')
+
+# Vérifie si l'utilisation de la RAM dépasse 80%
+if (( $(echo "$ram_usage > 80.0" | bc -l) )); then
+    # Envoyer un message d'alerte si la mémoire RAM atteint plus de 80%
+    sudo service apache2 restart
+    echo "Le service Apache a été redémarré."
+else
+    echo "L'utilisation de la RAM est inférieure à 80%."
+fi
+```
+
+#### ⏰ Configuration Cron (exécution toutes les 15 minutes)
+```bash
+*/15 * * * * /var/www/skiillz/checkRam.sh >/dev/null 2>&1
+```
+
+### 💻 Surveillance CPU
+```bash
+# Top 5 des processus utilisant le plus de CPU
+top -o %CPU -n 1 | head -n 12
+```
+
+---
+
+## 🚀 Développement React
+
+### 📊 Composants et Outils
+
+#### Progress Bar pour chargement de pages
+> 📖 **Tutorial :** [React Progress Bar on Route Changing](https://dev.to/ataparvinghods/react-progress-bar-on-route-changing-both-next-cra-3d27)
+
+#### 🎨 Styles CSS pour boutons
+> 📖 **Ressource :** [Boutons CSS - ZoneCSS](https://www.zonecss.fr/laboratoire-css/boutons-en-css.html)
+
+### 🔍 Hooks et API React
+
+#### useQuery React
+> 📖 **Documentations :**
+> - [useQuery React Guide](https://builtin.com/software-engineering-perspectives/use-query-react)
+> - [TanStack Query v3](https://tanstack.com/query/v3/docs/react/guides/queries)
+> - [TanStack Overview](https://tanstack.com/query/v3/docs/react/overview)
+
+#### ⚡ React Lazy Loading et Suspense
+> 📖 **Guide complet :** [React Lazy Loading with Suspense](https://refine.dev/blog/react-lazy-loading/)
+
+#### 🚨 Error Boundaries
+> 📖 **Documentation :** [React TypeScript Error Boundaries](https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/error_boundaries/)
+
+#### 🖼️ Optimisation d'images Next.js
+> 📖 **Guide officiel :** [Next.js Image Optimization](https://nextjs.org/docs/pages/building-your-application/optimizing/images)
+
+---
+
+## 🗄️ Base de Données MySQL
+
+### 🔒 Gestion des Verrous InnoDB
+
+> 📖 **Références :**
+> - [Setting innodb_lock_wait_timeout](https://www.ebhor.com/setting-innodb_lock_wait_timeout/)
+> - [Stack Overflow - Lock Wait Timeout](https://stackoverflow.com/questions/2766785/fixing-lock-wait-timeout-exceeded-try-restarting-transaction-for-a-stuck-my)
+
+#### 🔍 Vérification des paramètres InnoDB
+```sql
+-- Voir la valeur par défaut (défaut: 50)
+SHOW VARIABLES LIKE 'innodb_lock_wait_timeout';
+
+-- Alternative 1
+SHOW GLOBAL VARIABLES LIKE '%INNODB_LOCK_WAIT_TIMEOUT%';
+
+-- Alternative 2
+SELECT @@innodb_lock_wait_timeout;
+```
+
+#### 📊 Diagnostic des verrous
+```sql
+-- Vérifier l'état d'InnoDB pour les verrous
+SHOW ENGINE InnoDB STATUS;
+
+-- Vérifier les tables ouvertes
+SHOW OPEN TABLES WHERE In_use > 0;
+
+-- Liste des processus SQL
+SHOW PROCESSLIST;
+
+-- Transactions InnoDB en attente
+SELECT * FROM `information_schema`.`innodb_trx` ORDER BY `trx_started`;
+
+-- Dépendance des verrous
+SELECT * FROM `information_schema`.`innodb_locks`;
+```
+
+#### ⚙️ Modification du timeout
+```sql
+-- Configuration globale
+SET GLOBAL innodb_lock_wait_timeout = 100;
+
+-- Configuration de session
+SET SESSION innodb_lock_wait_timeout = 100;
+```
+
+---
+
+## 📊 Analyse de Logs
+
+### 🔍 Techniques Grep avancées
+
+#### Filtrage par adresse IP
+> 📖 **Guide :** [Grep IP Address in Log Files](https://www.sentinelone.com/blog/grep-ip-address-log-file/)
+
+```bash
+# Recherche d'IP exacte
+grep 46.72.177.4 access.log
+
+# Recherche en début de ligne
+grep "^46.72.177.4" access.log
+
+# Compter les occurrences
+grep "^154.126.16.65 " /var/log/apache2/access.log | wc -l
+grep "^MaxRequestWorkers" /var/log/apache2/error.log | wc -l
+```
+
+#### 📈 Surveillance en temps réel
+```bash
+# Filtrer par IP en temps réel
+tail -f /var/log/apache2/access.log | grep 192.168.206.1
+
+# Exclure les fichiers statiques
+tail -f /var/log/apache2/error.log | egrep -v "(.gif|.jpg|.png|.swf|.ico)"
+```
+
+### 📊 GoAccess pour analyse de trafic
+
+> 📖 **Guide :** [Analyse visiteurs Ubuntu](https://fr.linux-console.net/?p=7105#gsc.tab=0)
+
+#### Installation
+```bash
+apt-get install goaccess
+```
+
+#### Utilisation
+```bash
+# Analyse basique Apache2
+goaccess /var/log/apache2/access.log
+
+# Rapport HTML temps réel
+goaccess /var/log/apache2/access.log \
+         -o /var/www/skiillz/report.html \
+         --log-format=COMMON \
+         --real-time-html
+```
+
+### 🧹 Nettoyage automatique des logs
+```bash
+# Supprimer les fichiers de log avec index > 2
+find . -name "error.log.*.gz" \
+       -type f \
+       -regextype posix-extended \
+       -regex ".*error\.log\.[0-9]+\.gz" \
+       -printf "%f\n" | awk -F'.' '$NF > 2' | xargs rm -f
+```
+
+---
+
+## 🔧 Configuration Serveur Web
+
+### 🔄 Migration Apache2 vers Nginx
+
+#### Démarrage des services
+```bash
+# Démarrer Nginx
+sudo systemctl start nginx
+
+# Redémarrer PHP-FPM
+sudo /etc/init.d/php7.4-fpm restart
+# ou
+sudo service php7.4-fpm restart
+
+# Créer lien symbolique pour site
+sudo ln -s /etc/nginx/sites-available/skiillzv2 /etc/nginx/sites-enabled/
+```
+
+#### 🔧 Configuration Apache2 (ports personnalisés)
+```apache
+# Configuration HTTP sur port 1800
+<VirtualHost *:1800>
+    ServerName skiillzv2
+    ServerAlias www.skiillzv2
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/skiillzv2
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    
+    RewriteEngine on
+    RewriteCond %{SERVER_NAME} =skiillzv2 [OR]
+    RewriteCond %{SERVER_NAME} =www.skiillzv2 [OR]
+    RewriteCond %{SERVER_NAME} =testpreprod.skiillz.com
+    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+</VirtualHost>
+
+# Configuration HTTPS sur port 4433
+<IfModule mod_ssl.c>
+<VirtualHost *:4433>
+    ServerName skiillzv2
+    ServerAlias www.skiillzv2 testpreprod.skiillz.com
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/skiillzv2
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    
+    SSLCertificateFile /etc/letsencrypt/live/testpreprod.skiillz.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/testpreprod.skiillz.com/privkey.pem
+    Include /etc/letsencrypt/options-ssl-apache.conf
+</VirtualHost>
+</IfModule>
+```
+
+#### 🔍 Commandes de diagnostic
+```bash
+# Voir les ports utilisés par Nginx
+sudo ps -elf | grep nginx
+
+# Voir tous les modules Apache2
+dpkg --get-selections | grep apache
+```
+
+### 🛡️ Fail2Ban pour sécurité
+
+> 📖 **Guide :** [Installer et paramétrer Fail2Ban](https://buzut.net/installer-et-parametrer-fail2ban/)
+
+```bash
+apt install fail2ban
+```
+
+### 📁 Gestion des archives
+```bash
+# Décompresser fichier .gz
+gzip -d file.gz
+```
+
+### ⚙️ WordPress Cron Optimisation
+
+> 📖 **Guide :** [WP-Cron vs Crontab](https://easyengine.io/tutorials/wordpress/wp-cron-crontab/)
+
+#### Désactiver WP-Cron natif
+```php
+// Ajouter dans wp-config.php
+define('DISABLE_WP_CRON', true);
+```
+
+#### Configurer Cron système
+```bash
+# Avec PHP (toutes les 10 minutes)
+*/10 * * * * cd /var/www/skiillz; /usr/bin/php /var/www/skiillz/wp-cron.php?doing_wp_cron > /dev/null 2>&1
+
+# Avec WP CLI (toutes les 10 minutes)
+*/10 * * * * cd /var/www/skiillz; wp cron event run --due-now > /dev/null 2>&1
+```
+
+---
+
+## 🌐 Outils et Utilitaires
+
+### 🔢 Calculateur de pourcentage
+[Calculateur en ligne HelloSafe](https://hellosafe.ca/outils/calcul-pourcentage)
+
+### 🏷️ Google Tag Assistant
+[Tag Assistant Google](https://tagassistant.google.com/)
+
+### 📧 Configuration Gmail
+> 📖 **Guide :** [Modifier mot de passe Gmail](https://support.google.com/mail/answer/41078?hl=fr&co=GENIE.Platform%3DDesktop)
+> 🔐 **Gestion compte :** [Google Account Security](https://myaccount.google.com/signinoptions/password)
+
+### 🌐 Ngrok pour tunneling
+
+#### 📝 Identifiants
+- **Email :** `Rafanomezantsoa4xxxxx@gmail.com`
+- **Mot de passe :** `mon_mail_prod + ##**`
+
+#### 🚀 Configuration et utilisation
+> 📖 **Documentation :** [Ngrok Setup Guide](https://dashboard.ngrok.com/get-started/setup)
+
+```bash
+# 1. Installation globale
+npm install ngrok -g
+
+# 2. Ajouter authtoken (depuis dashboard ngrok)
+ngrok config add-authtoken <votre_auth_token>
+
+# 3. Lancer tunnel sur port 3000
+ngrok http 3000
+
+# Alternative avec npm script
+npm run ngrok
+```
+
+### 🗺️ Sitemap et SEO
+> 📖 **Guide indexation :** [Temps d'indexation Google](https://www.panierdachat.com/blogue/combien-de-temps-met-google-a-indexer-votre-site-web-ou-le-mettre-a-jour/)
+
+**Exemple sitemap :** [https://www.eufonie.fr/page-sitemap.xml](https://www.eufonie.fr/page-sitemap.xml)
+
+### 🔐 VPN Configuration
+```
+Identifiant : user-rua138
+Mot de passe : EfUsr(@)#695
+```
+
+### 🛡️ Windows Defender CLI
+> 📖 **Manuel technique :** [Windows Defender en ligne de commande](https://www.malekal.com/comment-utiliser-windows-defender-en-ligne-de-commande-mpcmdrun/)
+
+### 🔄 Redirections htaccess
+> 📖 **Guide complet :** [Redirection 301 htaccess](https://www.blogdumoderateur.com/redirection-301-htaccess/)
+
+---
+
+## 📖 Références et Ressources
+
+### 📚 Documentations Officielles
+| Service | Documentation |
+|---------|---------------|
+| **Apache2** | [Linux Goffinet - Apache HTTP Server](https://linux.goffinet.org/services/apache-http-server/) |
+| **AWS RDS** | [Amazon RDS Documentation](https://docs.aws.amazon.com/rds/) |
+| **MySQL** | [MySQL Official Documentation](https://dev.mysql.com/doc/) |
+| **Nginx** | [Nginx Official Documentation](https://nginx.org/en/docs/) |
+
+### ⚠️ Notes Importantes
+- **Toujours** effectuer des sauvegardes avant modifications
+- **Tester** sur environnement de développement
+- **Surveiller** les logs après modifications
+- **Documenter** toutes les configurations
+
+---
+
+## 🔧 Maintenance et Support
+
+### 📊 Surveillance continue
+- Vérification quotidienne des logs d'erreur
+- Monitoring de l'utilisation RAM/CPU
+- Contrôle des performances base de données
+- Analyse du trafic avec GoAccess
+
+### 🚨 Procédures d'urgence
+1. **Redémarrage services** en cas de surcharge
+2. **Nettoyage logs** si espace disque faible  
+3. **Blocage IP** en cas d'attaque
+4. **Basculement** vers serveur de secours si nécessaire
+
+---
+
+*Document généré le 2025-08-06 08:00:43 UTC - Version 2.0*
+
+
+
+
+
+# 🖥️ Guide Avancé de Configuration Serveur
+
+> **Auteur :** Gerardetienne  
+> **Date de création :** 2025-08-06  
+> **Dernière mise à jour :** 2025-08-06 08:03:09 UTC  
+> **Version :** 3.0
+
+---
+
+## 📋 Table des Matières
+
+1. [🔍 Diagnostic et Monitoring](#-diagnostic-et-monitoring)
+2. [🔧 Configuration Apache2](#-configuration-apache2)
+3. [🚀 Migration Apache2 vers Nginx](#-migration-apache2-vers-nginx)
+4. [🛡️ Sécurité Nginx](#️-sécurité-nginx)
+5. [🦠 Sécurité et Antivirus](#-sécurité-et-antivirus)
+6. [⚙️ Déploiement et Outils](#️-déploiement-et-outils)
+7. [📅 Gestion des Tâches Cron](#-gestion-des-tâches-cron)
+
+---
+
+## 🔍 Diagnostic et Monitoring
+
+### 🌐 Vérification des ports utilisés par Nginx
+```bash
+netstat -ntpl
+```
+
+### 🌍 Obtenir l'IP publique du serveur
+```bash
+curl -4 icanhazip.com
+```
+
+### 📊 Vérification du statut des services
+```bash
+# Statut Nginx
+systemctl status nginx
+
+# Statut Apache2
+systemctl status apache2
+
+# Statut PHP-FPM
+systemctl status php7.4-fpm
+```
+
+---
+
+## 🔧 Configuration Apache2
+
+### 🔌 Changer le port d'écoute d'Apache2
+
+> 📖 **Documentation :** [Changer le port d'écoute Apache2](https://www.it-connect.fr/changer-le-port-decoute-dapache2/)
+
+#### Étape 1 : Modifier le fichier de configuration des ports
+```bash
+sudo nano /etc/apache2/ports.conf
+```
+
+#### Étape 2 : Modifier le Virtual Host
+```bash
+sudo nano /etc/apache2/sites-enabled/skiillzv2.conf
+```
+
+### 🛠️ Résolution d'erreurs courantes
+
+#### Erreur de verrou dpkg
+**Erreur :** `Waiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend`
+
+##### 🔍 Identifier le processus
+```bash
+ps aux | grep -i apt
+```
+
+##### ⚡ Arrêter le processus
+```bash
+sudo kill -9 628050
+```
+
+##### 🔧 Corriger les paquets
+```bash
+sudo dpkg --configure -a
+```
+
+---
+
+## 🚀 Migration Apache2 vers Nginx
+
+> 📖 **Guides de référence :**
+> - [Install Nginx Ubuntu 22.04 - DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-22-04)
+> - [WordPress LEMP Stack - LinuxBabe](https://www.linuxbabe.com/ubuntu/install-wordpress-ubuntu-20-04-nginx-mariadb-php7-4-lemp)
+> - [WordPress Nginx Configuration](https://www.nginx.com/resources/wiki/start/topics/recipes/wordpress/)
+
+### 🛑 Étape 1 : Arrêter et désactiver Apache2
+```bash
+# Arrêter Apache2
+sudo service apache2 stop
+sudo systemctl stop apache2
+sudo systemctl disable apache2
+
+# Nettoyage et mise à jour
+sudo apt clean all && sudo apt update && sudo apt dist-upgrade
+```
+
+### 📦 Étape 2 : Installation de Nginx et PHP-FPM
+```bash
+# Installer Nginx
+sudo apt install nginx
+
+# Installer PHP-FPM
+sudo apt-get install php7.4-fpm
+```
+
+### 🔥 Étape 3 : Configuration du pare-feu
+```bash
+# Voir les profils disponibles
+sudo ufw app list
+
+# Autoriser le trafic HTTP
+sudo ufw allow 'Nginx HTTP'
+
+# Autoriser le trafic HTTPS (si nécessaire)
+sudo ufw allow 'Nginx HTTPS'
+```
+
+### ⚙️ Étape 4 : Configuration du site
+```bash
+# Créer le fichier de configuration
+sudo nano /etc/nginx/sites-available/skiillzv2.conf
+```
+
+#### 📝 Configuration Nginx pour WordPress
+```nginx
+# Configuration HTTPS
+server {
+    server_name testpreprod.skiillz.com;
+    root /var/www/skiillzv2;
+    index index.php index.html;
+
+    # Optimisation favicon et robots.txt
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    # Configuration principale WordPress
+    location / {
+        autoindex on;
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    # Configuration PHP-FPM
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_intercept_errors on;
+        fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    # Cache des fichiers statiques
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        expires max;
+        log_not_found off;
+    }
+
+    # Configuration SSL (gérée par Certbot)
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/testpreprod.skiillz.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/testpreprod.skiillz.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+# Redirection HTTP vers HTTPS
+server {
+    if ($host = testpreprod.skiillz.com) {
+        return 301 https://$host$request_uri;
+    }
+
+    server_name testpreprod.skiillz.com;
+    root /var/www/skiillzv2;
+    listen 80;
+    return 404;
+}
+```
+
+### 🔗 Étape 5 : Activation du site
+```bash
+# Créer le lien symbolique
+sudo ln -s /etc/nginx/sites-available/skiillzv2.conf /etc/nginx/sites-enabled/
+
+# Vérifier que PHP-FPM socket existe
+ls /run/php/php7.4-fpm.sock
+```
+
+### ✅ Étape 6 : Validation et activation
+```bash
+# Tester la configuration Nginx
+nginx -t
+
+# Modifier la configuration principale si nécessaire
+sudo nano /etc/nginx/nginx.conf
+# Décommenter : server_names_hash_bucket_size 64;
+
+# Redémarrer les services
+sudo systemctl restart nginx
+sudo service php7.4-fpm restart
+
+# Activer Nginx au démarrage
+sudo systemctl enable nginx
+```
+
+---
+
+## 🛡️ Sécurité Nginx
+
+> 📖 **Guides de sécurité :**
+> - [Nginx WordPress Security Rules](https://www.hongkiat.com/blog/nginx-rules-for-wordpress-security/)
+> - [WordPress Nginx Security Best Practices](https://stackoverflow.com/questions/63753876/wordpress-nginx-security-best-practice)
+> - [Nginx WordPress Official Guide](https://www.nginx.com/resources/wiki/start/topics/recipes/wordpress/)
+
+### 🔒 Configuration de sécurité recommandée
+```nginx
+# Bloquer l'accès aux fichiers sensibles
+location ~ /\. {
+    deny all;
+    access_log off;
+    log_not_found off;
+}
+
+# Bloquer l'accès à wp-config.php
+location ~* wp-config\.php {
+    deny all;
+}
+
+# Bloquer l'accès aux fichiers de sauvegarde
+location ~* \.(bak|backup|old|temp)$ {
+    deny all;
+}
+
+# Limiter les méthodes HTTP
+if ($request_method !~ ^(GET|HEAD|POST)$ ) {
+    return 405;
+}
+```
+
+---
+
+## 🦠 Sécurité et Antivirus
+
+### 🔍 Détection de code malveillant
+
+#### Recherche de fichiers modifiés récemment
+```bash
+# Fichiers modifiés dans les 2 derniers jours
+find /var/www/skiillzv2 -type f -mtime -2
+```
+
+#### 🔎 Recherche de fonctions PHP suspectes
+```bash
+# Recherche de fonctions dangereuses
+grep -r --include=*.php "base64_decode" /var/www/skiillzv2
+grep -r --include=*.php "eval(" /var/www/skiillzv2
+grep -r --include=*.php "shell_exec" /var/www/skiillzv2
+grep -r --include=*.php "assert(" /var/www/skiillzv2
+grep -r --include=*.php "passthru(" /var/www/skiillzv2
+```
+
+### 🦠 Installation et utilisation d'antivirus
+
+#### Installation de ClamAV
+```bash
+sudo apt update && sudo apt install clamav -y
+```
+
+#### 🔍 Scan antivirus complet
+```bash
+# Mise à jour des définitions virales
+sudo freshclam
+
+# Scan récursif du répertoire web
+sudo clamscan -r /var/www/skiillzv2
+
+# Scan avec suppression automatique des virus
+sudo clamscan -r --remove /var/www/skiillzv2
+```
+
+---
+
+## ⚙️ Déploiement et Outils
+
+### 🚀 Déploiement Strapi
+> 📖 **Documentation officielle :** [Strapi Deployment Guide](https://docs.strapi.io/dev-docs/deployment)
+
+### 📦 Installation de Yarn
+
+#### 🐧 Sur Ubuntu/Linux
+```bash
+npm install -g yarn
+```
+
+#### 🪟 Sur Windows PowerShell (en tant qu'administrateur)
+```powershell
+# Modifier la politique d'exécution
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
+
+# Installer Chocolatey
+Set-ExecutionPolicy Bypass -Scope Process -Force; 
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; 
+iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# Installer Yarn via Chocolatey
+choco install yarn
+```
+
+---
+
+## 📅 Gestion des Tâches Cron
+
+### ❌ Désactiver définitivement Cron
+```bash
+# Arrêter le service Cron
+sudo systemctl stop cron
+
+# Désactiver au démarrage
+sudo systemctl disable cron
+
+# Redémarrer le système
+sudo reboot
+```
+
+### ✅ Réactiver Cron
+```bash
+# Activer le service au démarrage
+sudo systemctl enable cron
+
+# Démarrer le service
+sudo systemctl start cron
+
+# Redémarrer le système
+sudo reboot
+```
+
+### 🔍 Vérifier le statut de Cron
+```bash
+# Statut du service
+sudo systemctl status cron
+
+# Voir les tâches cron actives
+crontab -l
+
+# Éditer les tâches cron
+crontab -e
+```
+
+---
+
+## 📚 Ressources et Documentation
+
+### 🔗 Liens Utiles
+
+| Service | Documentation |
+|---------|---------------|
+| **Nginx** | [Guide officiel WordPress](https://www.nginx.com/resources/wiki/start/topics/recipes/wordpress/) |
+| **Bitnami** | [Manuel serveur Bitnami](https://docs.bitnami.com/aws/faq/administration/control-services/) |
+| **Apache2** | [Configuration ports d'écoute](https://www.it-connect.fr/changer-le-port-decoute-dapache2/) |
+| **LEMP Stack** | [WordPress sur Ubuntu 20.04](https://www.linuxbabe.com/ubuntu/install-wordpress-ubuntu-20-04-nginx-mariadb-php7-4-lemp) |
+
+### ⚠️ Bonnes Pratiques de Sécurité
+
+1. **🔐 Authentification forte**
+   - Utiliser des mots de passe complexes
+   - Activer l'authentification à deux facteurs
+
+2. **🛡️ Surveillance continue**
+   - Monitoring des logs en temps réel
+   - Scans antivirus réguliers
+   - Vérification des fichiers modifiés
+
+3. **🔄 Mises à jour régulières**
+   - Système d'exploitation
+   - Serveur web (Nginx/Apache)
+   - PHP et extensions
+   - WordPress et plugins
+
+4. **💾 Sauvegardes**
+   - Sauvegarde quotidienne des bases de données
+   - Sauvegarde des fichiers web
+   - Test de restauration régulier
+
+---
+
+## 🚨 Procédures d'Urgence
+
+### 🔧 Dépannage Rapide
+
+#### Site inaccessible
+```bash
+# Vérifier les services
+sudo systemctl status nginx
+sudo systemctl status php7.4-fpm
+
+# Redémarrer si nécessaire
+sudo systemctl restart nginx
+sudo systemctl restart php7.4-fpm
+```
+
+#### Problèmes de permissions
+```bash
+# Corriger les permissions WordPress
+sudo chown -R www-data:www-data /var/www/skiillzv2
+sudo chmod -R 755 /var/www/skiillzv2
+sudo chmod -R 644 /var/www/skiillzv2/wp-content
+```
+
+#### Saturation disque
+```bash
+# Vérifier l'espace disque
+df -h
+
+# Nettoyer les logs anciens
+sudo find /var/log -name "*.log" -type f -mtime +30 -delete
+sudo find /var/log -name "*.gz" -type f -mtime +30 -delete
+```
+
+---
+
+## 📞 Support et Maintenance
+
+### 🔍 Commandes de Diagnostic Essentielles
+```bash
+# Ressources système
+htop
+free -h
+df -h
+
+# Logs système
+sudo tail -f /var/log/syslog
+sudo tail -f /var/log/nginx/error.log
+sudo tail -f /var/log/php7.4-fpm.log
+
+# Connectivité réseau
+netstat -tulpn
+ss -tulpn
+```
+
+### 📊 Monitoring Continu
+- **CPU/RAM** : Surveillance toutes les 5 minutes
+- **Espace disque** : Vérification quotidienne
+- **Logs d'erreur** : Analyse en temps réel
+- **Sécurité** : Scan antivirus hebdomadaire
+
+---
+
+*Document généré le 2025-08-06 08:03:09 UTC par Gerardetienne - Version 3.0*
+
+
+
+# 🛠️ Documentation Technique Complète
+
+> **Auteur :** Gerardetienne  
+> **Date de création :** 2025-08-06  
+> **Dernière mise à jour :** 2025-08-06 08:05:09 UTC  
+> **Version :** 4.0
+
+---
+
+## 📋 Table des Matières
+
+1. [🎓 Gestion Moodle](#-gestion-moodle)
+2. [🌐 Configuration Bitnami](#-configuration-bitnami)
+3. [🔒 Certificats SSL et Nginx](#-certificats-ssl-et-nginx)
+4. [🐘 WordPress Administration](#-wordpress-administration)
+5. [☁️ Services Cloud AWS](#️-services-cloud-aws)
+6. [🔧 Configuration PHP](#-configuration-php)
+7. [📚 Outils de Développement](#-outils-de-développement)
+8. [🔍 SEO et Testing](#-seo-et-testing)
+
+---
+
+## 🎓 Gestion Moodle
+
+### ❌ Désactivation du Cron Moodle
+
+Pour désactiver le cron Moodle et prévenir l'exécution automatique des tâches :
+
+#### 🔧 Méthode 1 : Renommer le fichier cron
+```bash
+# Naviguer vers le répertoire CLI
+cd /var/www/html/admin/cli
+
+# Renommer le fichier pour le désactiver
+mv cron.php cron.php.disabled
+```
+
+#### 🛠️ Méthode 2 : Désactiver via systemd
+```bash
+/lib/systemd/systemd-sysv-install disable cron
+```
+
+### 🐘 Configuration PHP Zend
+> 📖 **Documentation :** [Zend PHP 7.4 Installation](https://help.zend.com/zendphp/current/content/installation/zendphpctl.htm)
+
+---
+
+## 🌐 Configuration Bitnami
+
+> 📖 **Documentation officielle :** [Bitnami AWS Administration](https://docs.bitnami.com/aws/faq/administration/generate-configure-certificate-letsencrypt/)
+
+### 🔐 Génération de certificats SSL
+
+#### Étape 1 : Génération avec Certbot
+```bash
+# Générer le certificat SSL
+sudo certbot certonly --webroot -w /opt/bitnami/wordpress/ --apache -d test-web.eufonie.fr
+
+# Redémarrer Apache
+sudo /opt/bitnami/ctlscript.sh restart apache
+```
+
+#### Étape 2 : Configuration SSL manuelle
+```bash
+# Éditer la configuration SSL
+sudo nano /opt/bitnami/apache/conf/bitnami/bitnami-ssl.conf
+
+# Vérifier la configuration du renouvellement
+cat /etc/letsencrypt/renewal/test-web.eufonie.fr.conf
+```
+
+#### 🛠️ Utilisation de l'outil Bitnami
+```bash
+sudo /opt/bitnami/bncert-tool
+```
+
+### 📝 Configuration VirtualHost SSL
+```apache
+<VirtualHost _default_:443>
+  DocumentRoot "/opt/bitnami/apache/htdocs"
+  SSLEngine on
+  
+  # Certificats SSL
+  SSLCertificateFile "/opt/bitnami/apache/conf/bitnami/certs/server.crt"
+  SSLCertificateKeyFile "/opt/bitnami/apache/conf/bitnami/certs/server.key"
+  
+  # Ou pour Let's Encrypt
+  # SSLCertificateFile "/etc/letsencrypt/live/test-web.eufonie.fr/cert.pem"
+  # SSLCertificateKeyFile "/etc/letsencrypt/live/test-web.eufonie.fr/privkey.pem"
+
+  <Directory "/opt/bitnami/apache/htdocs">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+  </Directory>
+
+  # Pages d'erreur personnalisées
+  ErrorDocument 503 /503.html
+</VirtualHost>
+```
+
+### 🔍 Vérification des certificats
+```bash
+# Rechercher les certificats existants
+sudo grep -irl "$(openssl s_client -verify_quiet -showcerts -connect test-web.eufonie.fr:443 2>/dev/null | sed -n '/BEGIN/,/END/{p;/END/q}' | head -n 3 | tail -n 2)" /opt/bitnami/letsencrypt /etc/letsencrypt
+```
+
+---
+
+## 🔒 Certificats SSL et Nginx
+
+### 🌐 Configuration Multi-domaine
+
+#### Objectif : Rediriger `jobs.eufonie.fr` vers `www.eufonie.fr/jobs`
+
+#### Étape 1 : Configuration Nginx
+```bash
+# Créer le fichier de configuration
+sudo nano /etc/nginx/sites-available/jobs.eufonie.fr
+```
+
+##### Configuration de redirection
+```nginx
+server {
+    listen 80;
+    listen [::]:80;
+    server_name jobs.eufonie.fr;
+
+    location / {
+        rewrite ^/(.*)$ https://www.eufonie.fr/jobs/$1 permanent;
+    }
+}
+```
+
+#### Étape 2 : Activation du site
+```bash
+# Créer le lien symbolique
+sudo ln -s /etc/nginx/sites-available/jobs.eufonie.fr /etc/nginx/sites-enabled/
+
+# Vérifier la configuration
+sudo nginx -t
+
+# Recharger Nginx
+sudo systemctl reload nginx
+```
+
+#### Étape 3 : Configuration DNS (AWS Route 53)
+> 🌐 **Console AWS :** [Route 53 Hosted Zones](https://us-east-1.console.aws.amazon.com/route53/v2/hostedzones?region=eu-west-2#ListRecordSets/Z2CUI5E8J1EHYG)
+
+### 🔐 Gestion des certificats SSL
+
+#### Test de renouvellement
+```bash
+certbot renew --dry-run
+```
+
+#### Génération pour nouveau domaine
+```bash
+# Ajouter le certificat au domaine principal
+sudo certbot --nginx -d www.eufonie.fr
+
+# Recharger Nginx
+sudo systemctl reload nginx
+```
+
+#### 🔍 Vérification et maintenance
+```bash
+# Voir l'état des certificats
+sudo certbot certificates
+
+# Renouvellement forcé
+sudo certbot renew --force-renewal
+
+# Renouvellement avec rechargement automatique
+sudo certbot renew --nginx && sudo systemctl reload nginx
+```
+
+#### 🔄 Configuration WordPress (optionnel)
+Dans **Outils → Redirection** du back-office :
+- **URL source :** `http://jobs.eufonie.fr`
+- **Code HTTP :** `308 - Rediriger de façon permanente`
+- **URL cible :** `https://www.eufonie.fr/jobs`
+
+---
+
+## 🐘 WordPress Administration
+
+### 🔧 Résolution erreur WP CLI
+
+**Erreur :** `PHP Fatal error: Uncaught Error: Call to undefined function add_filter()`
+
+> 📖 **Issue GitHub :** [WP CLI Issue #3574](https://github.com/wp-cli/wp-cli/issues/3574)
+
+#### Solution dans `wp-config.php`
+```php
+/** Absolute path to the WordPress directory. */
+if ( ! defined( 'ABSPATH' ) ) {
+    define( 'ABSPATH', __DIR__ . '/' );
+}
+
+/** Sets up WordPress vars and included files. */
+require_once ABSPATH . 'wp-settings.php';
+
+// Fix pour WP CLI
+if ( defined( 'WP_CLI' ) ) {
+    $_SERVER['HTTP_HOST'] = 'localhost';
+}
+
+// Désactiver temporairement si nécessaire
+// add_filter('xmlrpc_enabled', '__return_false');
+```
+
+### 🔑 Reset de mot de passe via API
+
+> 📖 **Plugin WordPress :** [BDVS Password Reset](https://wordpress.org/plugins/bdvs-password-reset/)
+
+#### 📧 Demande de reset
+```javascript
+$.ajax({
+  url: '/wp-json/bdpwr/v1/reset-password',
+  method: 'POST',
+  data: {
+    email: 'example@example.com',
+  },
+  success: function( response ) {
+    console.log( response );
+  },
+  error: function( response ) {
+    console.log( response );
+  },
+});
+```
+
+#### 🔐 Définir nouveau mot de passe
+```javascript
+$.ajax({
+  url: '/wp-json/bdpwr/v1/set-password',
+  method: 'POST',
+  data: {
+    email: 'example@example.com',
+    code: '1234',
+    password: 'Pa$$word1',
+  },
+  success: function( response ) {
+    console.log( response );
+  },
+  error: function( response ) {
+    console.log( response );
+  },
+});
+```
+
+### ⚡ Optimisation compression Gzip/Brotli
+
+> 💬 **Guide détaillé :** [Configuration Gzip WordPress](https://chatgpt.com/share/67288d33-5f5c-800d-9ab6-946aedce5612)
+
+#### Configuration Nginx (`/etc/nginx/nginx.conf`)
+```nginx
+server {
+    # Activation Gzip
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml+rss application/javascript;
+    gzip_vary on;
+    gzip_min_length 1000;
+    gzip_comp_level 6;
+
+    # Configuration spécifique pour ce domaine
+}
+```
+
+#### 🧪 Test de compression
+```bash
+# Vérifier la configuration
+sudo nginx -t
+sudo systemctl reload nginx
+
+# Tester la compression Gzip
+curl -H "Accept-Encoding: gzip" -I http://votre-site.com
+```
+
+---
+
+## ☁️ Services Cloud AWS
+
+### 🛠️ Installation AWS CLI (Ubuntu 24.04)
+
+#### Installation complète
+```bash
+# Mise à jour du système
+sudo apt update
+
+# Installation des dépendances
+sudo apt install -y python3 python3-pip unzip
+
+# Téléchargement d'AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+
+# Extraction et installation
+unzip awscliv2.zip
+sudo ./aws/install
+
+# Vérification
+aws --version
+
+# Configuration
+aws configure
+```
+
+#### 📁 Copie de fichiers S3
+```bash
+# Syntax générale
+aws s3 cp ./nom_file_à_copier s3://your_compartiment_bucket/nom_file_à_copier
+
+# Exemple
+aws s3 cp ./backup.sql s3://mon-bucket/backups/backup.sql
+```
+
+### 💾 Configuration EFS (Elastic File System)
+
+> 📖 **Documentation AWS :** [EFS Auto Mount](https://docs.aws.amazon.com/fr_fr/efs/latest/ug/mount-fs-auto-mount-update-fstab.html)
+
+#### Création d'un service systemd pour montage automatique
+
+##### Étape 1 : Créer le service
+```bash
+sudo nano /etc/systemd/system/mount-efs.service
+```
+
+##### Étape 2 : Configuration du service
+```ini
+[Unit]
+Description=Mount EFS at startup
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.0.87:/ /efs
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+##### Étape 3 : Activation du service
+```bash
+# Recharger systemd
+sudo systemctl daemon-reload
+
+# Activer le service au démarrage
+sudo systemctl enable mount-efs.service
+
+# Tester le service
+sudo systemctl start mount-efs.service
+sudo systemctl status mount-efs.service
+```
+
+### 🗄️ Import de base de données
+```bash
+# Import MySQL depuis AWS RDS
+mysql --verbose -u admin -p skiillz --host=database_your_host.af-south-1.rds.amazonaws.com < db_backup20241124_11_00.sql
+
+# Connexion directe
+mysql -h database_your_host.af-south-1.rds.amazonaws.com -u admin -p
+
+# Créer un utilisateur WordPress
+wp user create gerardetiennedev gerarddev@eufonie.fr --role=administrator
+```
+
+---
+
+## 🔧 Configuration PHP
+
+### 🔄 Changement de version PHP
+
+#### Vérifier les versions installées
+```bash
+update-alternatives --list php
+```
+**Sortie type :**
+```
+/usr/bin/php8.0
+/usr/bin/php8.3
+```
+
+#### Changer la version active
+```bash
+# Changer vers PHP 8.3
+sudo update-alternatives --set php /usr/bin/php8.3
+
+# Vérifier la version
+php -v
+```
+
+### 🌐 Configuration Apache pour PHP
+
+#### Basculer les modules Apache
+```bash
+# Désactiver PHP 8.0
+sudo a2dismod php8.0
+
+# Activer PHP 8.3
+sudo a2enmod php8.3
+
+# Redémarrer Apache
+sudo systemctl restart apache2
+```
+
+### 📤 Augmentation des limites d'upload
+
+#### Configuration PHP 8.3
+```bash
+# Éditer la configuration PHP
+sudo nano /etc/php/8.3/apache2/php.ini
+```
+
+#### Paramètres recommandés
+```ini
+upload_max_filesize = 128M
+post_max_size = 128M
+max_execution_time = 300
+max_input_time = 300
+memory_limit = 256M
+```
+
+#### Redémarrage des services
+```bash
+sudo systemctl restart apache2
+```
+
+### 🔐 Permissions Moodle
+```bash
+sudo chown -R www-data:www-data sessions cache localcache muc
+sudo chmod -R 770 sessions cache localcache muc
+```
+
+### 📦 Extraction d'archives
+
+> 📖 **Guide :** [Décompresser tar.gz - Kinsta](https://kinsta.com/fr/base-de-connaissances/decompresser-tar-gz/)
+
+```bash
+# Extraction fichier tar.gz
+tar -xvf filename.tar.gz
+```
+
+---
+
+## 📚 Outils de Développement
+
+### 📊 ChartBrew
+
+#### 🐳 Démarrage avec Docker
+```bash
+# Build des conteneurs
+docker compose build
+
+# Lancement des services
+docker compose up
+```
+
+### 📖 Docusaurus
+
+#### Workflow de développement
+```bash
+# Après modification des fichiers Markdown
+# 1. Arrêter le serveur (Ctrl + C)
+
+# 2. Nettoyer le cache
+npm run clear
+
+# 3. Redémarrer en mode développement
+npm run dev
+
+# 4. Pour les commits Git
+cd "C:\MyProject\Docu-skiillz\Skiillz-docs"
+```
+
+---
+
+## 🔍 SEO et Testing
+
+### 📱 Test des réseaux sociaux
+**Outil Facebook :** [Facebook Debugger](https://developers.facebook.com/tools/debug/?q=https%3A%2F%2Fwww.skiillz.com%2Frecherche-demploi-5-erreurs-courantes-a-eviter-sur-un-cv)
+
+### 🎨 Projet Adobe XD
+**Maquettes :** [Adobe XD Project](https://xd.adobe.com/view/6c78859c-b4b9-4348-b9b5-016d016a09ab-392b/screen/210350e5-8b4f-4361-998b-44c3dc447c15/)
+
+---
+
+## 📚 Ressources et Documentation
+
+### 🔗 Liens Essentiels
+
+| Service | Documentation |
+|---------|---------------|
+| **Bitnami SSL** | [Generate SSL Certificate](https://docs.bitnami.com/aws/faq/administration/generate-configure-certificate-letsencrypt/) |
+| **Let's Encrypt** | [Service Agreement](https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf) |
+| **WordPress API** | [Password Reset Plugin](https://wordpress.org/plugins/bdvs-password-reset/) |
+| **AWS EFS** | [Auto Mount Configuration](https://docs.aws.amazon.com/fr_fr/efs/latest/ug/mount-fs-auto-mount-update-fstab.html) |
+
+### ⚠️ Bonnes Pratiques
+
+#### 🔐 Sécurité
+- **Sauvegardes régulières** des configurations
+- **Test des configurations** avant mise en production
+- **Monitoring des certificats** SSL
+- **Vérification des permissions** fichiers
+
+#### 🚀 Performance
+- **Activation de la compression** Gzip/Brotli
+- **Optimisation des limites** PHP
+- **Monitoring des ressources** serveur
+- **Cache approprié** pour les applications
+
+#### 🛠️ Maintenance
+- **Renouvellement automatique** des certificats
+- **Mise à jour régulière** des dépendances
+- **Documentation** des changements
+- **Tests de restauration** périodiques
+
+---
+
+## 🚨 Procédures d'Urgence
+
+### 🔧 Diagnostic Rapide
+
+#### Services indisponibles
+```bash
+# Vérifier les services critiques
+sudo systemctl status nginx apache2 mysql php8.3-fpm
+
+# Redémarrer si nécessaire
+sudo systemctl restart nginx
+sudo systemctl restart php8.3-fpm
+```
+
+#### Problèmes SSL
+```bash
+# Vérifier les certificats
+sudo certbot certificates
+
+# Renouvellement d'urgence
+sudo certbot renew --force-renewal --nginx
+```
+
+#### Espace disque saturé
+```bash
+# Vérifier l'espace
+df -h
+
+# Nettoyage d'urgence
+sudo find /var/log -name "*.log" -type f -mtime +7 -delete
+sudo apt autoremove && sudo apt autoclean
+```
+
+---
+
+## 📞 Support et Maintenance
+
+### 📊 Surveillance Continue
+
+#### Services à monitorer
+- **Nginx/Apache** : Status et logs d'erreur
+- **PHP-FPM** : Processus et mémoire
+- **MySQL** : Connexions et performances
+- **Certificats SSL** : Expiration et validité
+
+#### 📈 Métriques importantes
+- **CPU/RAM** : < 80% en utilisation normale
+- **Espace disque** : > 20% libre recommandé
+- **Temps de réponse** : < 2 secondes pour pages web
+- **Uptime** : > 99.9% visé
+
+### 🔄 Maintenance Préventive
+
+#### Hebdomadaire
+- Vérification des **logs d'erreur**
+- Test de **sauvegarde/restauration**
+- Contrôle des **mises à jour disponibles**
+
+#### Mensuelle
+- Renouvellement **certificats SSL**
+- Nettoyage des **fichiers temporaires**
+- Audit des **permissions fichiers**
+- Test des **procédures d'urgence**
+
+---
+
+*Document généré le 2025-08-06 08:05:09 UTC par Gerardetienne - Version 4.0*
+
+
+</SimpleAuth>
